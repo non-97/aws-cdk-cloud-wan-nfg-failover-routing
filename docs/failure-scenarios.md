@@ -178,11 +178,11 @@ avoidRegions はヘルスチェックの検出と LIVE から復元した集合�
 
 east-west 通信 (VPC 間) の検査リージョンは「ペアの両端 2 リージョン」から選ばれる。
 両端に NFG があれば優先度上位の端、片端だけならその端、両端になければ優先度 1 位のリージョンが使われる。
-両端にない場合の挙動は egress の観測からの外挿であり、README の実機検証 18 で確認予定である。
+両端にない場合は地理チェーンに従い、グループの NFG 優先度チェーンの先頭が選ばれる。FIB で確認済みである (evidence)。
 この選択に地理的な近さは影響しない。
 
 同一リージョン内の VPC 間通信 (各リージョンの Workload VPC 1 ↔ 2) は両端が同じリージョンなので、そのリージョンに NFG があればローカルで検査される。
-これは公式記載からの推論であり、実機では未確認である (README の実機検証 9)。
+FIB で同一リージョン内の VPC 間通信がローカル NFG で検査されることを確認済みである (evidence)。
 
 次表が全通信ペアの検査先マトリクスである。
 列は avoidRegions (両 AZ 障害のリージョン集合) で、27 通り表の avoidRegions 列の値から該当列を引く。
@@ -190,26 +190,24 @@ east-west 通信 (VPC 間) の検査リージョンは「ペアの両端 2 リ�
 
 | 通信ペア | avoid なし | use1 | apne1 | apne3 | use1 / apne1 | use1 / apne3 | apne1 / apne3 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| use1 内 VPC 間 (注 2) | use1 | 注 1 | use1 | use1 | apne3 | apne1 | use1 |
-| usw2 内 VPC 間 (注 2 / 注 3) | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
-| apne1 内 VPC 間 (注 2) | apne1 | apne1 | 注 1 | apne1 | apne3 | apne1 | use1 |
-| apne3 内 VPC 間 (注 2) | apne3 | apne3 | apne3 | use1 | apne3 | apne1 | use1 |
+| use1 内 VPC 間 | use1 | apne1 (注 1) | use1 | use1 | apne3 | apne1 | use1 |
+| usw2 内 VPC 間 | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
+| apne1 内 VPC 間 | apne1 | apne1 | use1 (注 1) | apne1 | apne3 | apne1 | use1 |
+| apne3 内 VPC 間 | apne3 | apne3 | apne3 | apne1 | apne3 | apne1 | use1 |
 | use1 ↔ usw2 | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
 | use1 ↔ apne1 | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
 | use1 ↔ apne3 | use1 | apne3 | use1 | use1 | apne3 | apne1 | use1 |
 | usw2 ↔ apne1 | apne1 | apne1 | use1 | apne1 | apne3 | apne1 | use1 |
 | usw2 ↔ apne3 | apne3 | apne3 | apne3 | use1 | apne3 | apne1 | use1 |
 | apne1 ↔ apne3 | apne1 | apne1 | apne3 | apne1 | apne3 | apne1 | use1 |
-| apse1 内 VPC 間 (注 2 / 注 3) | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
+| apse1 内 VPC 間 | apne1 | apne1 | apne3 | apne1 | apne3 | apne1 | use1 |
 | use1 ↔ apse1 | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
-| usw2 ↔ apse1 (注 3) | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
-| apne1 ↔ apse1 | apne1 | apne1 | use1 | apne1 | apne3 | apne1 | use1 |
-| apne3 ↔ apse1 | apne3 | apne3 | apne3 | use1 | apne3 | apne1 | use1 |
+| usw2 ↔ apse1 | use1 | apne1 | use1 | use1 | apne3 | apne1 | use1 |
+| apne1 ↔ apse1 | apne1 | apne1 | apne3 | apne1 | apne3 | apne1 | use1 |
+| apne3 ↔ apse1 | apne3 | apne3 | apne3 | apne1 | apne3 | apne1 | use1 |
 
-注 1: 両 AZ 障害になったリージョン自身の内部通信で、検査先は健全リージョンのいずれかになる。どちらになるかは実機で確認する (未確認)。候補はいずれも健全なため、多重マッチ時にいずれかのエントリが選ばれる限りブラックホールにはならない (選択規則の存在自体は実機検証 15 で確認する)。
-注 2: 同一リージョン内の VPC 間通信が NFG で検査されること自体が実機では未確認である (README の実機検証 9)。
-注 3: 両端に NFG がないため優先度 1 位を使うという egress 観測からの外挿に基づく (README の実機検証 18 で確認予定)。
-avoidRegions が全 3 リージョンの場合はポリシーを変更せず、検査対象の通信は全断になる (fail-close)。
+- 注 1: 両 AZ 障害になったリージョン自身の内部通信で、複数の send-via エントリにマッチする。FIB で検査先を確認済み: avoid={use1} の use1 自己ペア → apne1、avoid={apne1} の apne1 自己ペア → apne3 (evidence)。候補はいずれも健全なためブラックホールにはならない。
+- avoidRegions が全 3 リージョンの場合はポリシーを変更せず、検査対象の通信は全断になる (fail-close)。
 
 読み方の例を 2 つ挙げる。
 
@@ -266,8 +264,8 @@ send-to は per-edge である。各エッジの優先 NFG が健全ならそれ
 | --- | --- | --- | --- | --- | --- | --- |
 | なし | - | use1 (自身) | use1 | apne1 (自身) | apne3 (自身) | apne1 |
 | use1 | apne1 | apne1 | apne1 | apne1 (自身) | apne3 (自身) | apne1 |
-| apne1 | use1 | use1 (自身) | use1 | use1 | apne3 (自身) | use1 |
-| apne3 | use1 | use1 (自身) | use1 | apne1 (自身) | use1 | apne1 |
+| apne1 | use1 | use1 (自身) | use1 | apne3 | apne3 (自身) | apne3 |
+| apne3 | apne1 | use1 (自身) | use1 | apne1 (自身) | apne1 | apne1 |
 | use1 / apne1 | apne3 | apne3 | apne3 | apne3 | apne3 (自身) | apne3 |
 | use1 / apne3 | apne1 | apne1 | apne1 | apne1 (自身) | apne1 | apne1 |
 | apne1 / apne3 | use1 | use1 (自身) | use1 | use1 | use1 | use1 |
@@ -281,7 +279,7 @@ override されないペアはデフォルトの検査先に従うため、健�
 
 | avoidRegions | 生成エントリ (edge-sets → use-edge-location) |
 | --- | --- |
-| なし | 生成なし (baseline) |
+| なし | baseline の自己ペア override: <br>- [[usw2]]→use1 <br>- [[apse1]]→apne1 |
 | use1 | 8 エントリ: <br>- [[use1,usw2]]→apne1 <br>- [[use1,apne1]]→apne1 <br>- [[use1,apne3]]→apne3 <br>- [[use1,apse1]]→apne1 <br>- [[usw2,apse1]]→apne1 <br>- [[use1]]→apne1 <br>- [[usw2]]→apne1 <br>- [[apse1]]→apne1 |
 | apne1 | 4 エントリ: <br>- [[usw2,apne1]]→use1 <br>- [[apne1,apne3]]→apne3 <br>- [[apne1,apse1]]→use1 <br>- [[apne1]]→use1 |
 | apne3 | 3 エントリ: <br>- [[usw2,apne3]]→use1 <br>- [[apne3,apse1]]→use1 <br>- [[apne3]]→use1 |
@@ -292,8 +290,8 @@ override されないペアはデフォルトの検査先に従うため、健�
 
 障害中のリージョン自身の自己ペア (self-pair) は複数エントリにマッチするが、マッチ先の候補値が一致せず検査先が未確定になるのは avoid が use1 または apne1 単独の 2 ケースに限られる。
 他のケースは全マッチ先が同一値のため確定する。
-未確定の 2 ケースの優先順位は実機で確認する (未確認)。
-候補値はいずれも健全なため、多重マッチ時にいずれかのエントリが選ばれる限りブラックホールにはならない (選択規則の存在自体は実機検証 15 で確認する)。
+2 ケースの実測値は FIB で確認済み: avoid={use1} → apne1、avoid={apne1} → apne3 (evidence)。
+候補値はいずれも健全なためブラックホールにはならない。
 
 ---
 
@@ -375,7 +373,8 @@ ap-southeast-1 追加後の 5 リージョン構成 (15 ペア) で、合成テ�
 
 2026-07-15 実施分 (sticky avoid = バグ 9 修正)。
 合成テンプレートから抽出した MergeLiveAvoid の式で、LIVE ポリシーからの liveAvoid 復元と和集合を M1〜M7 として検証した。
-#8 / #6 どちらの経由でも avoid={apne1, apne3} に収束すること (経路非依存)、和集合による fail-close、旧形式 (single-set 方式時代のポリシー) での [] 正規化、$distinct の重複除去、和集合 avoid での ovrTo 回帰をすべて確認した。
+
+# 8 / #6 どちらの経由でも avoid={apne1, apne3} に収束すること (経路非依存)、和集合による fail-close、旧形式 (single-set 方式時代のポリシー) での [] 正規化、$distinct の重複除去、和集合 avoid での ovrTo 回帰をすべて確認した
 
 同日、TestState の Task 実行 (実 SDK 呼び出し) で `networkmanager:putCoreNetworkPolicy` に存在しない ID を渡し、エラー名が `NetworkManager.ResourceNotFoundException` と返ることを観測した。
 これにより、PutPolicyConflict が catch する `NetworkManager.ConflictException` が用いるエラー名の接頭辞規則 (`NetworkManager.`) を実測で確認した。
@@ -401,8 +400,25 @@ send-to 側は目標ポリシーの override が常に全エッジ分の 5 エ�
 
 デプロイ後の実機検証に委ねる。対応する README の実機検証項目の番号を各項目に示す。
 
-1. per-edge override / 自己参照 override を PutCoreNetworkPolicy が受理するか、default priority より優先されるか。baseline 側の受理は CloudFormation デプロイで確認する (README 実機検証 2 / 6 / 19)
+1. per-edge override / 自己参照 override を PutCoreNetworkPolicy が受理するか、default priority より優先されるか (README 実機検証 2 / 6 / 19)
+   - 確認済み: baseline の per-edge override (CloudFormation デプロイ) とフェイルオーバーの override (PutCoreNetworkPolicy) の両方が受理され、FIB に正しく反映されることを 5 シナリオで確認 (evidence)
 2. cross-region Lambda invoke の実 Payload がハンドラーソースの確認どおりパース済みオブジェクトで返るか (README 実機検証 3)
+   - 確認済み: オーケストレーターが正常に動作しており、パース済みオブジェクトで返る前提の healthy 判定式が期待どおり機能している
 3. DescribeRouteTables 実応答で Gateway Load Balancer のエンドポイントが GatewayId に入るか。Terraform Provider ソースでは確認済みである (README 実機検証 4)
-4. 同一 AZ 固定 (AZ pinning) / FLOW ログ / RTO 計測 (README 実機検証 1 / 5)
-5. send-via per-pair が依存する未文書挙動 4 点はオーケストレーター経由のフェイルオーバーで確認済みである。エッジの複数エントリ重複の受理 (確認済み)、set 外 use-edge-location の受理 (確認済み)、カバー外ペアがデフォルトの検査先へフォールバックすること (確認済み、ブラックホール化せず)、多重マッチの優先順位 (avoid={apne1} で FIB から use1 が採用されたことを確認。avoid={use1} は未検証)。各項目の意味と具体例は [send-via-override-research.md](send-via-override-research.md) の「公式ドキュメントに記載がなかった事項」を参照 (README 実機検証 13 / 14 / 15)
+   - 確認済み: 片 AZ 障害の ReplaceRoute が正常に動作し、障害 AZ のルートテーブルのネクストホップが健全な AZ の NFW エンドポイントへ切り替わることを確認
+4. send-via per-pair が依存する未文書挙動 4 点はオーケストレーター経由のフェイルオーバーで確認済みである (evidence の 4 障害シナリオで確認)
+   - エッジの複数エントリ重複の受理: 確認済み
+   - set 外 use-edge-location の受理: 確認済み
+   - カバー外ペアがデフォルトの検査先へフォールバックすること: **フェイルオーバー時は確認済み** (ブラックホール化せず)。ただし baseline に send-via override を書いた場合はカバー外ペアがブラックホール化する (evidence 平常時)。フェイルオーバー時は全ペアの override が生成されるため問題ない
+   - 多重マッチの優先順位: FIB で確認済み。avoid={use1} → apne1、avoid={apne1} → apne3 (evidence)
+   - 各項目の意味と具体例は [send-via-override-research.md](send-via-override-research.md) の「公式ドキュメントに記載がなかった事項」を参照 (README 実機検証 13 / 14 / 15)
+
+### 実機検証で新たに判明した事項 (2026-07-20)
+
+evidence の 5 シナリオ (平常時 + 4 障害パターン) から判明した事項を記録する。
+
+1. **地理チェーンの動作確認**: send-to / send-via ともにチェーン走査が期待どおり動作している。avoid={use1} で use1 ↔ apne3 の検査先が apne3 になること (以前は apne1)、avoid={apne1} で apse1 の egress が apne3 になること (以前は use1) を FIB で確認
+2. **RIB は全シナリオで不変**: ポリシーの send-to / send-via override は FIB (確定ルート) にのみ反映され、RIB (候補ルート) には影響しない。5 シナリオの RIB がバイト単位で同一であることを確認
+3. **baseline の send-via override によるカバー外ブラックホール**: baseline に send-via の with-edge-overrides を 1 つでも書くと、override でカバーされていないペアの経路がブラックホール化する。具体的には usw2 エッジの egress (0.0.0.0/0) や use1 VPC 宛を含む大半の経路がブラックホール化した。フェイルオーバーポリシーでは全ペアの override が生成されるため解消される。この blackhole は検証環境の特性として許容する
+4. **健全リージョンのローカル検査は全シナリオで維持**: us-east-1 / ap-northeast-1 / ap-northeast-3 は自身がダウンしていない限り常にローカル INSPECTION を維持。per-pair 設計の狙いが実機で実証された
+5. **PutCoreNetworkPolicy に account:GetRegionOptStatus / account:ListRegions / ec2:DescribeRegions が必要**: SFN SDK 統合経由の PutCoreNetworkPolicy は、ポリシーに含まれるリージョンのオプトイン状態を内部で確認するためにこの 3 権限が必要。CallAwsService の iamAction だけでは付与されない (実機テストで特定)

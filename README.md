@@ -136,7 +136,7 @@ wait
 pnpm cdk diff
 pnpm cdk deploy \
   --all \
-  --concurrency 4 \
+  --concurrency 8 \
   --require-approval never
 
 # デプロイ完了後、各 NFG リージョン (us-east-1 / ap-northeast-1 / ap-northeast-3) の
@@ -169,7 +169,7 @@ aws scheduler update-schedule \
 
 スケジュールは無効状態でデプロイされる。デプロイ直後は Cloud WAN のルート伝播が未完了で、リージョン間の立ち上がり速度差により健全なリージョンが誤って回避対象 (avoid) になり得る。一度回避対象になると手動復旧まで戻らない。そのため疎通の確立を確認してから起動する。update-schedule は全プロパティ上書き型のため、get-schedule の出力を加工して渡す。なお、SFN の手動実行による疎通確認は行わない。ルート伝播が未完了の状態で実行すると、異常判定から avoid が確定して手動復旧が必要になるためである (スケジュール有効化を待つ理由と同じ)。
 
-初回デプロイは 16 本のアタッチメントを並列作成するため、Cloud WAN 側の change event 処理が集中する。内訳は Workload VPC が 5 リージョン x 2 本 = 10 本、NFG 3 リージョンの Inspection VPC と HealthCheck VPC が 3 x 2 = 6 本である。過去の検証で、アタッチメント 6 本の一括再作成により変更イベントの処理キューが飽和し約 3 時間処理が停滞する事象を確認しているため (新規作成のみでの再現は未確認)、デプロイがアタッチメント作成で長時間停滞した場合はこの既知事象を疑い、完了を待つ (自動回復する)。懸念がある場合は `--concurrency 1` で順にデプロイしてもよい。
+初回デプロイは 16 本のアタッチメントを並列作成するため、Cloud WAN 側の change event 処理が集中する。内訳は Workload VPC が 5 リージョン x 2 本 = 10 本、NFG 3 リージョンの Inspection VPC と HealthCheck VPC が 3 x 2 = 6 本である。デプロイがアタッチメント作成で長時間停滞した場合は、変更イベントの処理キューの集中を疑い、完了を待つ (自動回復する)。懸念がある場合は `--concurrency 1` で順にデプロイしてもよい。
 
 VPC の AZ は `lib/config.ts` の `availabilityZones` に明示固定している。context lookup を使わないため、`cdk.context.json` がない環境でも synth は決定論的に成功する。AZ 名が指す物理 AZ はアカウントごとに異なるため、別アカウントへ転用する場合は値を見直すこと。
 
@@ -208,7 +208,7 @@ VPC の AZ は `lib/config.ts` の `availabilityZones` に明示固定してい�
 14. **カバー外ペアのデフォルト経路選択によるフォールバック** (確認済み)
     override を生成しないペアがブラックホール化せず、デフォルトの経路選択 (両端の優先上位) で検査されるか。apne1 ダウン時、override に含まれない apne3 エッジの use1 VPC 宛 CIDR が `us-east-1/INSPECTION` で ACTIVE であり、ブラックホール化せずデフォルトの検査先へフォールバックすることを確認した。方式 C を single-set に戻す必要はない (evidence/ap-northeast-1ダウン時)
 15. **多重マッチの優先順位** (apne1 ダウン時は確認済み)
-    障害リージョンの自己ペア (self-pair) が複数エントリにマッチしたとき、どの値が採用されるか。avoid={apne1} の自己ペアでは候補値が use1 と apne3 だが、FIB (確定ルート) で apne1 エッジの apne1 VPC 宛 CIDR がすべて us-east-1/INSPECTION を向いており、use1 が採用されたことを確認した (evidence/ap-northeast-1ダウン時)。avoid={use1} の自己ペアは未検証
+    障害リージョンの自己ペア (self-pair) が複数エントリにマッチしたとき、どの値が採用されるか。FIB で確認済み: avoid={use1} → apne1、avoid={apne1} → apne3 (evidence)。候補はいずれも健全なためブラックホールにはならない
 16. **両 AZ 障害 NFG への経路がブラックホール化すること**
     avoid リージョンの NFG への経路が、attachment 残置のため迂回せずブラックホール化し、fail-close が成立するか
 17. **冪等スキップの空振り更新確認**
@@ -283,7 +283,6 @@ restore はバージョンを復元して LATEST にするだけで、**LIVE へ
 ## 今後の課題
 
 - アラームへの通知アクション (SNS など) を設定する。アラーム自体は実装済みで、通知アクションのみ未設定である
-- send-via のレイテンシ最適化 (apse1 内 / usw2 ↔ apse1 の baseline を apne1 へ向ける)。set 外 use-edge-location の send-via での受理 (実機検証 13) と、デフォルト #1 挙動の観測 (実機検証 18) の完了後に判断する。経緯は [docs/send-via-override-research.md](docs/send-via-override-research.md) にある
 - fail-close 時に全エッジを自リージョン向きへ戻す「可観測化ポリシー」適用を検討する。fail-close 後の復旧をヘルスチェックで検出できるようにするためである。現在は LIVE ポリシーの参照先によっては、復旧可能になったことをヘルスチェックの成否からは観測できない
 
 ## 本番転用時の制約

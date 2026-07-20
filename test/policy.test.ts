@@ -59,9 +59,18 @@ describe("baseline Core Network Policy", () => {
     ]);
   });
 
-  test("baseline の send-via は with-edge-overrides を含まない (override はランタイム生成)", () => {
+  test("baseline の send-via は NFG なしリージョンの自己ペアを最近傍へ向ける override を持つ", () => {
     const actions = policy["segment-actions"];
     const sendVia = actions.find((a: any) => a.action === "send-via");
-    expect(sendVia.via["with-edge-overrides"]).toBeUndefined();
+    const overrides = sendVia.via["with-edge-overrides"];
+    expect(overrides).toBeDefined();
+    const apse1Override = overrides.find((o: any) =>
+      o["edge-sets"].some((s: string[]) => s.includes("ap-southeast-1")),
+    );
+    expect(apse1Override["use-edge-location"]).toBe("ap-northeast-1");
+    const usw2Override = overrides.find((o: any) =>
+      o["edge-sets"].some((s: string[]) => s.includes("us-west-2")),
+    );
+    expect(usw2Override["use-edge-location"]).toBe("us-east-1");
   });
 });

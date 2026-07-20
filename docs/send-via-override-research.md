@@ -64,7 +64,14 @@ send-via (east-west 検査) のフェイルオーバー override を「全エッ
 
 以下、これらを未知 1〜4 と呼ぶ。
 
-**2026-07-20 実機検証結果**: オーケストレーター経由のフェイルオーバー (avoid={ap-northeast-1}) で未知 1 / 3 / 4 の受理と正常動作を確認した (evidence/ap-northeast-1ダウン時)。未知 2 (多重マッチの優先順位) は avoid={apne1} で FIB から use1 が採用されたことを確認した (apne1 エッジの apne1 VPC 宛 CIDR がすべて us-east-1/INSPECTION)。avoid={use1} の自己ペアは未検証。カバー外ペアのブラックホール化は発生せず、方式 C を single-set に戻す必要はない。
+**2026-07-20 実機検証結果 (第 1 回)**: オーケストレーター経由のフェイルオーバー (avoid={ap-northeast-1}) で未知 1 / 3 / 4 の受理と正常動作を確認した (evidence/ap-northeast-1ダウン時)。カバー外ペアのブラックホール化は発生せず、方式 C を single-set に戻す必要はない。
+
+**2026-07-20 実機検証結果 (第 2 回、地理チェーン導入後)**: 5 シナリオ (平常時 + 4 障害パターン) を evidence に記録した。主な確認事項は次のとおり。
+
+- 地理チェーンによる send-to / send-via の override 値が期待どおり動作。avoid={use1} で use1 ↔ apne3 の検査先が apne3 に変わること (以前は apne1)、avoid={apne1} で apse1 の egress が apne3 に変わること (以前は use1) を FIB で確認
+- 健全リージョンのローカル検査は全シナリオで維持 (per-pair 設計の実証)
+- **未知 4 の追加知見**: フェイルオーバー時はカバー外ペアがデフォルトにフォールバックする (ブラックホール化しない) が、**baseline に send-via override を 1 つでも書くと、カバー外ペアがブラックホール化する** (evidence 平常時: usw2 エッジの egress を含む大半がブラックホール)。フェイルオーバーポリシーは全ペアの override を生成するため問題ない。baseline の blackhole は検証環境の特性として許容する
+- RIB は全 5 シナリオでバイト単位で同一。send-to / send-via の override 変更は FIB にのみ反映される
 
 未知 1 / 3 / 4 のいずれかで期待どおりの挙動が得られない場合は per-pair を諦め、config.ts の `SEND_VIA_OVERRIDE_MODE` を single-set へ戻して再デプロイする。
 single-set は全エッジを 1 つの set に入れて failoverTarget へ向ける方式で、カバー外ペアが存在せず use-edge-location も set 内であり、公式サンプルと同形のため受理リスクが最小である。
@@ -135,4 +142,5 @@ single-set は全エッジを 1 つの set に入れて failoverTarget へ向け
 - 2026-07-09: 方式 B を設計した。未知 2 は構造的に回避できると判明したが、未知 1 / 3 は実機実験でしか確定できず、受理されない場合はフェイルオーバー機能全体が失われるリスクがあるため、検証プロジェクトの主目的であるフェイルオーバー動作の実証を先に完了させる方針とし、この時点では見送った。README の「今後の課題」に記載した。方式 C もこの時点で検討したが、未カバーペアのフォールバック挙動にブラックホール化の疑いがあることを理由に却下した
 - 2026-07-12: 要件変更により**方式 C を採用して実装した**。要件変更の内容は、ap-northeast-1 障害時に健全な ap-northeast-3 のローカル検査を維持することが必須になった点である。全 8 avoid セットの機械検証で、ブラックホール化ゼロ / 正常な self-pair のローカル維持 / 見落としゼロを確認した。値が一致しない多重マッチは障害中のリージョン自身の self-pair の 2 ケースのみで、候補値はすべて健全であり安全側である。TestState では、生成が発生する 7 通りの avoid セットの `$ovrVia` 生成と拡張 alreadyApplied を検証済みである ([failure-scenarios.md](failure-scenarios.md) の V1〜V10。全 3 リージョン avoid は fail-close により PutPolicy に到達しないため対象外)。未文書挙動 (エントリ重複 / set 外 use-edge-location / カバー外ペアのフォールバック / 多重マッチ優先順位) はデプロイ後の実機検証項目とし、受理されない場合は config.ts の `SEND_VIA_OVERRIDE_MODE` を single-set へ戻して再デプロイする
 - 2026-07-15: 非 NFG リージョン ap-southeast-1 を追加した。「両端なし → #1」の実機根拠が egress の観測のみで、両端 NFG なしの VPC ペアでの直接観測が構成上不可能だったためである。usw2 内 self-pair は「同一リージョン内通信が検査されない可能性」(README の実機検証 9) と論点が重なる。usw2 ↔ apse1 のクロスペアでこの組み合わせを観測する (README の実機検証 18)
-- 2026-07-15 (2): baseline の send-to に per-edge override を常設した。これによりヘルスチェックの障害帰属を修正し、apse1 の egress を apne1 経由に変更した。send-via 側のレイテンシ最適化として apse1 内と usw2↔apse1 のペアを apne1 経由へ切り替える案は、次の 2 点を理由に見送り、将来対応として README の「今後の課題」に記録した。理由 1 は、set 外 use-edge-location の send-via での受理が未文書であること (実機検証 13)。理由 2 は、usw2↔apse1 のデフォルト #1 挙動そのものが apse1 追加の観測目的であること (実機検証 18)。両検証の完了後、受理が確認できればペア [[apse1]] と [[usw2,apse1]] に use-edge-location: ap-northeast-1 を追加する形で再開する
+- 2026-07-15 (2): baseline の send-to に per-edge override を常設した。これによりヘルスチェックの障害帰属を修正し、apse1 の egress を apne1 経由に変更した
+- 2026-07-20: 地理チェーン (US / AP グループ別の NFG 優先度チェーン) を導入し、baseline の send-via に NFG なしリージョンの自己ペア override を追加した ([[apse1]]→apne1 / [[usw2]]→use1)。フェイルオーバー時の override 値も地理チェーンに基づいて生成するよう変更した。実機検証 13 (set 外 use-edge-location の受理) と 18 (両端 NFG なしペアの検査先) は完了済み。FIB で全 5 シナリオ x 15 ペアの突合を完了し、マトリクスと完全一致を確認した (evidence)

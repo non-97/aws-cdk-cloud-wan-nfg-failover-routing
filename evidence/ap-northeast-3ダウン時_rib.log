@@ -1,0 +1,323 @@
+> scripts/get-rib.sh
+CoreNetwork=core-network-0329f55326ddc8124  (NM_REGION=us-west-2)
+===== RIB  SEGMENT=workload  EDGE=us-east-1 =====
+-----------------------------------------------------------------------------------------------------------------
+|                                       ListCoreNetworkRoutingInformation                                       |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|   AsPath    |  Comm    |      Edge       | LocalPref  |  Med  |      Prefix        |    Seg     |    Type     |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|             |          |  None           |  None      |  None |  10.1.0.0/16       |  None      |  vpc        |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64514 64513|  64513:1 |  ap-northeast-1 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64514 64513|  64513:1 |  ap-northeast-1 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64514 64516|  64516:1 |  ap-northeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64514 64516|  64516:1 |  ap-northeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64513      |          |  us-west-2      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.3.0.0/16       |  None      |  vpc        |
+|  64513      |          |  us-west-2      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64513 64516|  64516:1 |  us-west-2      |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64513 64516|  64516:1 |  us-west-2      |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64515 64513|  64513:1 |  ap-northeast-3 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64515 64513|  64513:1 |  ap-northeast-3 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64515 64516|  64516:1 |  ap-northeast-3 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64515 64516|  64516:1 |  ap-northeast-3 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64516 64513|  64513:1 |  ap-southeast-1 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64516 64513|  64513:1 |  ap-southeast-1 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.2.0.0/16       |  None      |  vpc        |
+|             |          |  None           |  None      |  None |  0.0.0.0/0         |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  0:0:0:0:0:0:0:0/0 |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  10.0.0.0/8        |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  172.16.0.0/12     |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  192.168.0.0/16    |  None      |  blackhole  |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+===== RIB  SEGMENT=workload  EDGE=us-west-2 =====
+-----------------------------------------------------------------------------------------------------------------
+|                                       ListCoreNetworkRoutingInformation                                       |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|   AsPath    |  Comm    |      Edge       | LocalPref  |  Med  |      Prefix        |    Seg     |    Type     |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|             |          |  None           |  None      |  None |  10.11.0.0/16      |  None      |  vpc        |
+|  64512      |          |  us-east-1      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64512      |          |  us-east-1      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64512 64516|  64516:1 |  us-east-1      |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64512 64516|  64516:1 |  us-east-1      |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.13.0.0/16      |  None      |  vpc        |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64514 64516|  64516:1 |  ap-northeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64514 64516|  64516:1 |  ap-northeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64515 64516|  64516:1 |  ap-northeast-3 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64515 64516|  64516:1 |  ap-northeast-3 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  0.0.0.0/0         |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  0:0:0:0:0:0:0:0/0 |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  10.0.0.0/8        |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  172.16.0.0/12     |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  192.168.0.0/16    |  None      |  blackhole  |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+===== RIB  SEGMENT=workload  EDGE=ap-northeast-1 =====
+-----------------------------------------------------------------------------------------------------------------
+|                                       ListCoreNetworkRoutingInformation                                       |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|   AsPath    |  Comm    |      Edge       | LocalPref  |  Med  |      Prefix        |    Seg     |    Type     |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|             |          |  None           |  None      |  None |  10.21.0.0/16      |  None      |  vpc        |
+|  64512      |          |  us-east-1      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64512      |          |  us-east-1      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64512 64513|  64513:1 |  us-east-1      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64512 64513|  64513:1 |  us-east-1      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64512 64516|  64516:1 |  us-east-1      |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64512 64516|  64516:1 |  us-east-1      |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.23.0.0/16      |  None      |  vpc        |
+|  64513      |          |  us-west-2      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64513      |          |  us-west-2      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64513 64516|  64516:1 |  us-west-2      |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64513 64516|  64516:1 |  us-west-2      |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64515 64513|  64513:1 |  ap-northeast-3 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64515 64513|  64513:1 |  ap-northeast-3 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64515 64516|  64516:1 |  ap-northeast-3 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64515 64516|  64516:1 |  ap-northeast-3 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64516 64513|  64513:1 |  ap-southeast-1 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64516 64513|  64513:1 |  ap-southeast-1 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64516 64515|  64515:1 |  ap-southeast-1 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.22.0.0/16      |  None      |  vpc        |
+|             |          |  None           |  None      |  None |  0.0.0.0/0         |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  0:0:0:0:0:0:0:0/0 |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  10.0.0.0/8        |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  172.16.0.0/12     |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  192.168.0.0/16    |  None      |  blackhole  |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+===== RIB  SEGMENT=workload  EDGE=ap-northeast-3 =====
+-----------------------------------------------------------------------------------------------------------------
+|                                       ListCoreNetworkRoutingInformation                                       |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|   AsPath    |  Comm    |      Edge       | LocalPref  |  Med  |      Prefix        |    Seg     |    Type     |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|             |          |  None           |  None      |  None |  10.33.0.0/16      |  None      |  vpc        |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64514 64513|  64513:1 |  ap-northeast-1 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64514 64513|  64513:1 |  ap-northeast-1 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64514 64516|  64516:1 |  ap-northeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64514 64516|  64516:1 |  ap-northeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.31.0.0/16      |  None      |  vpc        |
+|  64516      |          |  ap-southeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64516 64513|  64513:1 |  ap-southeast-1 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64516 64513|  64513:1 |  ap-southeast-1 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64516 64514|  64514:1 |  ap-southeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64516 64512|  64512:1 |  ap-southeast-1 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64516      |  64516:1 |  ap-southeast-1 |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64512      |          |  us-east-1      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64512      |          |  us-east-1      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64512 64513|  64513:1 |  us-east-1      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64512 64513|  64513:1 |  us-east-1      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64512 64516|  64516:1 |  us-east-1      |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64512 64516|  64516:1 |  us-east-1      |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|  64513      |          |  us-west-2      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64513      |          |  us-west-2      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64513 64516|  64516:1 |  us-west-2      |  0         |  100  |  10.41.0.0/16      |  workload  |  None       |
+|  64513 64516|  64516:1 |  us-west-2      |  0         |  100  |  10.43.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.32.0.0/16      |  None      |  vpc        |
+|             |          |  None           |  None      |  None |  0.0.0.0/0         |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  0:0:0:0:0:0:0:0/0 |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  10.0.0.0/8        |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  172.16.0.0/12     |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  192.168.0.0/16    |  None      |  blackhole  |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+===== RIB  SEGMENT=workload  EDGE=ap-southeast-1 =====
+-----------------------------------------------------------------------------------------------------------------
+|                                       ListCoreNetworkRoutingInformation                                       |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|   AsPath    |  Comm    |      Edge       | LocalPref  |  Med  |      Prefix        |    Seg     |    Type     |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+
+|             |          |  None           |  None      |  None |  10.43.0.0/16      |  None      |  vpc        |
+|  64512      |          |  us-east-1      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64512      |          |  us-east-1      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64512 64513|  64513:1 |  us-east-1      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64512 64513|  64513:1 |  us-east-1      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64512 64514|  64514:1 |  us-east-1      |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64512      |  64512:1 |  us-east-1      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64512 64515|  64515:1 |  us-east-1      |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  10.41.0.0/16      |  None      |  vpc        |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64515      |          |  ap-northeast-3 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64515 64513|  64513:1 |  ap-northeast-3 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64515 64513|  64513:1 |  ap-northeast-3 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64515 64514|  64514:1 |  ap-northeast-3 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64515 64512|  64512:1 |  ap-northeast-3 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64515      |  64515:1 |  ap-northeast-3 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64514      |          |  ap-northeast-1 |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64514 64513|  64513:1 |  ap-northeast-1 |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64514 64513|  64513:1 |  ap-northeast-1 |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64514      |  64514:1 |  ap-northeast-1 |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64514 64512|  64512:1 |  ap-northeast-1 |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64514 64515|  64515:1 |  ap-northeast-1 |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|  64513      |          |  us-west-2      |  0         |  100  |  0.0.0.0/0         |  workload  |  None       |
+|  64513      |          |  us-west-2      |  0         |  100  |  0:0:0:0:0:0:0:0/0 |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.1.0.0/16       |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.11.0.0/16      |  workload  |  None       |
+|  64513      |  64513:1 |  us-west-2      |  0         |  100  |  10.13.0.0/16      |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.2.0.0/16       |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.21.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.22.0.0/16      |  workload  |  None       |
+|  64513 64514|  64514:1 |  us-west-2      |  0         |  100  |  10.23.0.0/16      |  workload  |  None       |
+|  64513 64512|  64512:1 |  us-west-2      |  0         |  100  |  10.3.0.0/16       |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.31.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.32.0.0/16      |  workload  |  None       |
+|  64513 64515|  64515:1 |  us-west-2      |  0         |  100  |  10.33.0.0/16      |  workload  |  None       |
+|             |          |  None           |  None      |  None |  0.0.0.0/0         |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  0:0:0:0:0:0:0:0/0 |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  10.0.0.0/8        |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  172.16.0.0/12     |  None      |  blackhole  |
+|             |          |  None           |  None      |  None |  192.168.0.0/16    |  None      |  blackhole  |
++-------------+----------+-----------------+------------+-------+--------------------+------------+-------------+

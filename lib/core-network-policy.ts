@@ -2,7 +2,8 @@
  * Core Network Policy ドキュメント (baseline) を生成する純関数。
  *
  * baseline = 平常時の初期ポリシー。CDK synth (CoreStack の初期ポリシー) で使う。
- * send-to には per-edge override (各エッジ → 優先 NFG) を常設し、send-via の override は持たない。
+ * send-to には per-edge override (各エッジ → 優先 NFG) を常設し、send-via には
+ * NFG なしリージョンの自己ペアを最近傍 NFG へ向ける override を常設する。
  * フェイルオーバー時の override 生成はランタイム (JSONata Step Functions) 側で行う
  * (send-to は preferredNfgByEdge() を共有し、avoid が空なら baseline と同一になる)。
  *
@@ -11,13 +12,14 @@
  * - NFG          : inspection (Inspection VPC を収容)
  * - create-route : RFC1918 全帯を blackhole (未使用帯宛のドロップ)
  * - send-to      : workload からインターネット向け (0.0.0.0/0) を NFG 経由に
- * - send-via     : workload 同士の east-west を single-hop で NFG 経由に
+ * - send-via     : workload 同士の east-west を single-hop で NFG 経由に (NFG なしリージョンの自己ペアは最近傍へ override)
  */
 
 import {
   CLOUDWAN,
   REGION_CONFIGS,
   RFC1918_CIDRS,
+  isNfgRegion,
   preferredNfgByEdge,
 } from "./config";
 
@@ -26,11 +28,23 @@ import {
  * CfnCoreNetwork の policyDocument にそのまま渡す。
  */
 export const buildBaselineCoreNetworkPolicy = (): Record<string, unknown> => {
-  // send-to / send-via 共通の via ベース。send-via はこのまま使い、
-  // send-to は with-edge-overrides を追加して使う。
-  const via = {
+  const viaBase = {
     "network-function-groups": [CLOUDWAN.nfg],
   };
+
+  // NFG なしリージョンの自己ペア (同一リージョン内 VPC 間通信) を最近傍 NFG で
+  // 検査させる send-via override。override がないとデフォルトの優先度 #1 (use1) へ
+  // 向かうため、apse1 内の通信が use1 経由になりレイテンシが悪化する。
+  // 注意: baseline に send-via override を書くと、カバー外ペアが blackhole 化する
+  // (平常時の evidence で確認)。この blackhole は実害がないため許容する
+  // (フェイルオーバー時は全ペアの override が生成されるため解消される)
+  const preferred = preferredNfgByEdge();
+  const sendViaSelfPairOverrides = REGION_CONFIGS
+    .filter((r) => !isNfgRegion(r) && r.preferredNfgChain !== undefined)
+    .map((r) => ({
+      "edge-sets": [[r.region]],
+      "use-edge-location": preferred[r.region][0],
+    }));
 
   return {
     version: "2025.11",
@@ -89,10 +103,10 @@ export const buildBaselineCoreNetworkPolicy = (): Record<string, unknown> => {
         // 経由でレイテンシが悪化する。各エッジを優先 NFG (NFG あり = 自身 /
         // なし = 最近傍) へ固定して両方を解決する
         via: {
-          ...via,
+          ...viaBase,
           "with-edge-overrides": REGION_CONFIGS.map((r) => ({
             "edge-sets": [[r.region]],
-            "use-edge-location": preferredNfgByEdge()[r.region],
+            "use-edge-location": preferredNfgByEdge()[r.region][0],
           })),
         },
       },
@@ -101,7 +115,9 @@ export const buildBaselineCoreNetworkPolicy = (): Record<string, unknown> => {
         segment: CLOUDWAN.segment,
         mode: "single-hop",
         "when-sent-to": { segments: [CLOUDWAN.segment] },
-        via,
+        via: sendViaSelfPairOverrides.length > 0
+          ? { ...viaBase, "with-edge-overrides": sendViaSelfPairOverrides }
+          : viaBase,
       },
     ],
     "attachment-policies": [

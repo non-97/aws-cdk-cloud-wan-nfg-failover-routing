@@ -598,24 +598,28 @@ export class OrchestratorStack extends cdk.Stack {
     });
 
     // send-to 用の per-edge override 配列を生成する JSONata 部分式。
-    // 各エッジは優先 NFG (NFG あり = 自身 / なし = config の preferredNfg) が
-    // 健全ならそれを、死んでいれば failoverTarget を use-edge-location にする。
+    // 各エッジは優先 NFG チェーン (NFG あり = [自身, ...同グループの残り] / なし =
+    // config の preferredNfgChain) を先頭から健全性判定し、最初に健全なリージョンを
+    // use-edge-location にする (全滅なら failoverTarget)。地理グループ内で
+    // フォールバックすることで、apne1 ダウン時に apse1/apne1 のエッジが use1 ではなく
+    // apne3 (同じ AP グループ) へ向く。
     // avoid が空なら baseline (core-network-policy.ts) と同一のマップになる
     // (両者は preferredNfgByEdge() を共有する)。
     // AlreadyApplied の冪等判定と PutPolicy の生成の両方に同じ式を注入する。
-    const preferredMapLiteral = JSON.stringify(preferredNfgByEdge());
+    const chainMapLiteral = JSON.stringify(preferredNfgByEdge());
     const ovrToExpr = [
       "(",
       "  $avoid := $aggEff.avoidRegions;",
       "  $target := $aggEff.failoverTarget;",
       `  $allEdges := ${allRegionsLiteral};`,
-      `  $preferred := ${preferredMapLiteral};`,
+      `  $chains := ${chainMapLiteral};`,
       "  [$allEdges.(",
       "    $edge := $;",
-      "    $p := $lookup($preferred, $edge);",
+      "    $chain := $lookup($chains, $edge);",
+      "    $healthy := $filter($chain, function($r) { $not($r in $avoid) });",
       "    {",
       '      "edge-sets": [[$edge]],',
-      '      "use-edge-location": $not($p in $avoid) ? $p : $target',
+      '      "use-edge-location": $count($healthy) > 0 ? $healthy[0] : $target',
       "    }",
       "  )]",
       ")",
@@ -629,11 +633,19 @@ export class OrchestratorStack extends cdk.Stack {
     // (配列コンストラクタの undefined 挙動やシーケンス展開に依存しない形)。
     const perPairFragments = sendViaPairs().map((pair) => {
       const edgeSetLiteral = JSON.stringify([pair.edges]);
-      const valueExpr = pair.nfgEndsByPriority.reduceRight<string>(
+      // overrideChain (同一地理グループなら group チェーン、混合なら全 NFG 優先度順) を
+      // 先頭から健全性判定し、最初に健全なリージョンを使う (全滅なら $target)
+      const valueExpr = pair.overrideChain.reduceRight<string>(
         (fallback, end) => `$not("${end}" in $avoid) ? "${end}" : (${fallback})`,
         "$target",
       );
-      return `(("${pair.naturalPick}" in $avoid) ? [{ "edge-sets": ${edgeSetLiteral}, "use-edge-location": ${valueExpr} }] : [])`;
+      // alwaysOverride (NFG なしリージョンの自己ペア) は avoid の状態に関わらず
+      // override を常に生成する。baseline が常設する self-pair override を
+      // orchestrator のポリシー書き換え時に失わないため
+      const condition = pair.alwaysOverride
+        ? "true"
+        : `("${pair.naturalPick}" in $avoid)`;
+      return `((${condition}) ? [{ "edge-sets": ${edgeSetLiteral}, "use-edge-location": ${valueExpr} }] : [])`;
     });
     const perPairViaExpr = perPairFragments.reduce(
       (acc, frag) => `$append(${acc}, ${frag})`,

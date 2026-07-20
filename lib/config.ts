@@ -170,12 +170,15 @@ export interface RegionConfig {
   /** HealthCheck VPC の CIDR。NFG ありリージョンのみ持つ */
   readonly healthCheckCidr?: string;
   /**
-   * このエッジの egress (send-to) を平常時に向ける NFG リージョン。
-   * NFG ありリージョンは未指定 (自身が優先 NFG)。NFG なしリージョンは必須で、
-   * レイテンシが最小の NFG リージョンを指定する。フェイルオーバー時は
-   * ここが健全なら維持し、死んでいれば failoverTarget へ切り替える
+   * このエッジの egress (send-to) を平常時に向ける NFG リージョンの優先度チェーン
+   * (地理グループごとのフォールバック順)。
+   * NFG ありリージョンは未指定 (自身が優先 NFG。preferredNfgByEdge() がグループの
+   * チェーンから自動導出する)。NFG なしリージョンは必須で、先頭がレイテンシ最小の
+   * NFG リージョン、以降は同じ地理グループの NFG リージョンを優先度順に並べ、
+   * 最後に他グループの NFG リージョンを続ける。フェイルオーバー時はチェーンを
+   * 先頭から順に健全性判定し、最初に健全なリージョンを使う
    */
-  readonly preferredNfg?: string;
+  readonly preferredNfgChain?: readonly string[];
 }
 
 /**
@@ -199,7 +202,8 @@ export const REGION_CONFIGS: readonly RegionConfig[] = [
     defaultPriority: 4,
     availabilityZones: ["us-west-2a", "us-west-2b"],
     workloadCidrs: ["10.11.0.0/16", "10.13.0.0/16"],
-    preferredNfg: REGIONS.usEast1,
+    // US グループ: use1 → apne1 → apne3 (地理的近さの優先度チェーン)
+    preferredNfgChain: [REGIONS.usEast1, REGIONS.apNortheast1, REGIONS.apNortheast3],
   },
   {
     region: REGIONS.apNortheast1,
@@ -231,8 +235,12 @@ export const REGION_CONFIGS: readonly RegionConfig[] = [
     defaultPriority: 11,
     availabilityZones: ["ap-southeast-1a", "ap-southeast-1b"],
     workloadCidrs: ["10.41.0.0/16", "10.43.0.0/16"],
-    // egress は最近傍の東京へ向ける
-    preferredNfg: REGIONS.apNortheast1,
+    // AP グループ: apne1 (最近傍の東京) → apne3 → use1 (地理的近さの優先度チェーン)
+    preferredNfgChain: [
+      REGIONS.apNortheast1,
+      REGIONS.apNortheast3,
+      REGIONS.usEast1,
+    ],
   },
 ] as const;
 
@@ -265,6 +273,94 @@ export const failoverTargetRegion = (
 ): string | undefined =>
   nfgRegionsByPriority().find((r) => !avoidRegions.includes(r.region))?.region;
 
+/** NFG なしリージョンが宣言する preferredNfgChain (バリデーション込み)。地理グループの正準チェーン */
+interface RawNfgChain {
+  readonly region: string;
+  readonly chain: readonly string[];
+}
+
+/**
+ * REGION_CONFIGS から NFG なしリージョンの preferredNfgChain を集めてバリデーションする。
+ * NFG ありリージョンに指定されていた場合や、要素の過不足 (NFG ありリージョン以外を含む /
+ * 重複がある / 全 NFG リージョンを含まない) はここで例外にする。
+ */
+const rawNfgChains = (): readonly RawNfgChain[] => {
+  const nfgRegions = REGION_CONFIGS.filter(isNfgRegion).map((r) => r.region);
+  return REGION_CONFIGS.filter((r) => r.preferredNfgChain !== undefined).map(
+    (r) => {
+      if (isNfgRegion(r)) {
+        throw new Error(
+          `${r.region}: NFG ありリージョンに preferredNfgChain は指定できない (自身が優先 NFG)`,
+        );
+      }
+      const chain = r.preferredNfgChain as readonly string[];
+      if (new Set(chain).size !== chain.length) {
+        throw new Error(`${r.region}: preferredNfgChain に重複がある`);
+      }
+      if (chain.some((c) => !nfgRegions.includes(c))) {
+        throw new Error(
+          `${r.region}: preferredNfgChain の要素は全て NFG ありリージョンであること`,
+        );
+      }
+      if (nfgRegions.some((n) => !chain.includes(n))) {
+        throw new Error(
+          `${r.region}: preferredNfgChain は全 NFG リージョンを含むこと`,
+        );
+      }
+      return { region: r.region, chain };
+    },
+  );
+};
+
+/**
+ * NFG ありリージョンが所属する地理グループの正準チェーンを選ぶ。
+ * 「自身が最も上位にランクされる (chain 内の index が最小の) rawChain」を採用する。
+ * 例: apne3 は US チェーン [use1,apne1,apne3] では index 2、AP チェーン
+ * [apne1,apne3,use1] では index 1 のため AP チェーンを採用する
+ * (先頭要素が自身と一致するかどうかでは判定できない。apne3 はどちらの
+ * rawChain でも先頭ではないため)。
+ */
+const bestRawChainFor = (
+  region: string,
+  chains: readonly RawNfgChain[],
+): readonly string[] => {
+  const best = chains.reduce<{ idx: number; chain: readonly string[] }>(
+    (acc, cur) => {
+      const idx = cur.chain.indexOf(region);
+      return idx >= 0 && idx < acc.idx ? { idx, chain: cur.chain } : acc;
+    },
+    { idx: Infinity, chain: [] },
+  );
+  if (best.chain.length === 0) {
+    throw new Error(
+      `${region}: preferredNfgChain を持つ NFG なしリージョンが見つからない (地理グループを導出できない)`,
+    );
+  }
+  return best.chain;
+};
+
+/**
+ * リージョンが所属する地理グループの正準チェーン (グループの全メンバーで同一の配列内容になる)。
+ * NFG なしリージョンは自身の preferredNfgChain がそのままグループの正準チェーン。
+ * NFG ありリージョンは bestRawChainFor で導出する。
+ * send-via ペアの「同一グループ判定」に使う (2 エッジのグループチェーンが
+ * 内容として一致するかどうかで判定する。先頭要素の比較では NFG ありリージョン同士の
+ * 判定ができない (自身が先頭になるため常に不一致になる))。
+ */
+const groupChainOf = (
+  region: string,
+  chains: readonly RawNfgChain[],
+): readonly string[] => {
+  const config = REGION_CONFIGS.find((r) => r.region === region);
+  if (config === undefined) {
+    throw new Error(`${region}: REGION_CONFIGS に存在しないリージョン`);
+  }
+  if (!isNfgRegion(config)) {
+    return config.preferredNfgChain as readonly string[];
+  }
+  return bestRawChainFor(region, chains);
+};
+
 /** send-via の候補ペア (クロス 10 + self 5)。orchestrator が override 生成式の合成に使う */
 export interface SendViaPair {
   /** ペアの構成エッジ。self ペア (同一リージョン内 VPC 間) は 1 要素 */
@@ -273,6 +369,18 @@ export interface SendViaPair {
   readonly nfgEndsByPriority: readonly string[];
   /** override なしのときに選ばれる検査リージョン (静的に決まる) */
   readonly naturalPick: string;
+  /**
+   * フェイルオーバー時の override 値チェーン。ペアの全エッジが同一地理グループなら
+   * そのグループの NFG チェーン、混合グループなら全 NFG リージョンを優先度順
+   * (nfgRegionsByPriority) に並べたもの
+   */
+  readonly overrideChain: readonly string[];
+  /**
+   * true の場合、naturalPick が avoid に含まれるかどうかに関わらず override を
+   * 常に生成する (NFG なしリージョンの自己ペアが対象。baseline が常設する
+   * self-pair override を、orchestrator のポリシー書き換え時に失わないため)
+   */
+  readonly alwaysOverride: boolean;
 }
 
 /**
@@ -283,12 +391,33 @@ export const sendViaPairs = (): readonly SendViaPair[] => {
   const regions = REGION_CONFIGS.map((r) => r.region);
   const nfgOrder = nfgRegionsByPriority().map((r) => r.region);
   const globalTop = nfgOrder[0];
+  const chains = rawNfgChains();
+  const groupChainByRegion = Object.fromEntries(
+    regions.map((region) => [region, groupChainOf(region, chains)]),
+  );
+  const isNfgRegionByName = (region: string): boolean =>
+    REGION_CONFIGS.some((r) => r.region === region && isNfgRegion(r));
   const pairOf = (edges: readonly string[]): SendViaPair => {
     const nfgEnds = nfgOrder.filter((n) => edges.includes(n));
+    const naturalPick = nfgEnds.length > 0 ? nfgEnds[0] : globalTop;
+    const groupChains = edges.map((e) => groupChainByRegion[e]);
+    const sameGroup = groupChains.every(
+      (c) => JSON.stringify(c) === JSON.stringify(groupChains[0]),
+    );
+    // 同一グループ → そのグループの NFG チェーン
+    // 混合グループ → ペアの NFG 端を先頭に、残りの NFG を優先度順で追加
+    // (ペア端を優先することで、健全な端があればそちらで検査される)
+    const overrideChain = sameGroup
+      ? groupChains[0]
+      : [...nfgEnds, ...nfgOrder.filter((n) => !nfgEnds.includes(n))];
+    const alwaysOverride =
+      edges.length === 1 && !isNfgRegionByName(edges[0]);
     return {
       edges,
       nfgEndsByPriority: nfgEnds,
-      naturalPick: nfgEnds.length > 0 ? nfgEnds[0] : globalTop,
+      naturalPick,
+      overrideChain,
+      alwaysOverride,
     };
   };
   const crossPairs = regions.flatMap((a, i) =>
@@ -299,32 +428,29 @@ export const sendViaPairs = (): readonly SendViaPair[] => {
 };
 
 /**
- * エッジごとの優先 NFG のマップ。NFG ありリージョンは自身、なしリージョンは
- * preferredNfg。baseline ポリシーの send-to override と、フェイルオーバーの
- * send-to 生成 (優先 NFG が健全なら維持) の両方がこのマップを使う。
+ * エッジごとの優先 NFG チェーンのマップ。NFG ありリージョンは [自身, ...同じ地理グループの
+ * 残り NFG リージョン]、NFG なしリージョンは自身の preferredNfgChain そのもの。
+ * baseline ポリシーの send-to override と、フェイルオーバーの send-to 生成
+ * (チェーンを先頭から健全性判定) の両方がこのマップを使う。
  * 平常時の probe が自リージョンの NFG を通ることを保証する (帰属の機能要件)。
  */
-export const preferredNfgByEdge = (): Record<string, string> =>
-  Object.fromEntries(
+export const preferredNfgByEdge = (): Record<string, readonly string[]> => {
+  const chains = rawNfgChains();
+  return Object.fromEntries(
     REGION_CONFIGS.map((r) => {
       if (isNfgRegion(r)) {
-        if (r.preferredNfg !== undefined) {
-          throw new Error(
-            `${r.region}: NFG ありリージョンに preferredNfg は指定できない (自身が優先 NFG)`,
-          );
-        }
-        return [r.region, r.region];
+        const groupChain = bestRawChainFor(r.region, chains);
+        return [
+          r.region,
+          [r.region, ...groupChain.filter((x) => x !== r.region)],
+        ];
       }
-      if (
-        r.preferredNfg === undefined ||
-        !REGION_CONFIGS.some(
-          (c) => isNfgRegion(c) && c.region === r.preferredNfg,
-        )
-      ) {
+      if (r.preferredNfgChain === undefined) {
         throw new Error(
-          `${r.region}: NFG なしリージョンは preferredNfg に NFG ありリージョンを指定すること`,
+          `${r.region}: NFG なしリージョンは preferredNfgChain の指定が必須`,
         );
       }
-      return [r.region, r.preferredNfg];
+      return [r.region, r.preferredNfgChain];
     }),
   );
+};

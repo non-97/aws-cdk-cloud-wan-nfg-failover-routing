@@ -1,0 +1,242 @@
+{
+  "version": "2025.11",
+  "core-network-configuration": {
+    "dns-support": true,
+    "security-group-referencing-support": true,
+    "asn-ranges": [
+      "64512-64555"
+    ],
+    "edge-locations": [
+      {
+        "location": "us-east-1",
+        "asn": 64512
+      },
+      {
+        "location": "us-west-2",
+        "asn": 64513
+      },
+      {
+        "location": "ap-northeast-1",
+        "asn": 64514
+      },
+      {
+        "location": "ap-northeast-3",
+        "asn": 64515
+      },
+      {
+        "location": "ap-southeast-1",
+        "asn": 64516
+      }
+    ]
+  },
+  "network-function-groups": [
+    {
+      "name": "inspection",
+      "require-attachment-acceptance": false
+    }
+  ],
+  "segments": [
+    {
+      "name": "workload",
+      "edge-locations": [
+        "us-east-1",
+        "us-west-2",
+        "ap-northeast-1",
+        "ap-northeast-3",
+        "ap-southeast-1"
+      ],
+      "require-attachment-acceptance": false,
+      "isolate-attachments": false
+    }
+  ],
+  "attachment-policies": [
+    {
+      "description": "attach workload segment by tag",
+      "rule-number": 100,
+      "condition-logic": "or",
+      "conditions": [
+        {
+          "type": "tag-value",
+          "operator": "equals",
+          "key": "cloudwan-seg",
+          "value": "workload"
+        }
+      ],
+      "action": {
+        "association-method": "constant",
+        "segment": "workload"
+      }
+    },
+    {
+      "description": "add to inspection NFG by tag",
+      "rule-number": 200,
+      "condition-logic": "or",
+      "conditions": [
+        {
+          "type": "tag-value",
+          "operator": "equals",
+          "key": "cloudwan-nfg",
+          "value": "inspection"
+        }
+      ],
+      "action": {
+        "add-to-network-function-group": "inspection"
+      }
+    }
+  ],
+  "segment-actions": [
+    {
+      "action": "create-route",
+      "description": "Drop unused RFC1918 space to prevent NFG hairpin and loops",
+      "segment": "workload",
+      "destination-cidr-blocks": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ],
+      "destinations": [
+        "blackhole"
+      ]
+    },
+    {
+      "action": "send-to",
+      "segment": "workload",
+      "via": {
+        "network-function-groups": [
+          "inspection"
+        ],
+        "with-edge-overrides": [
+          {
+            "edge-sets": [
+              [
+                "us-east-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-west-2"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "ap-northeast-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "ap-northeast-3"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-3"
+          },
+          {
+            "edge-sets": [
+              [
+                "ap-southeast-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          }
+        ]
+      },
+      "when-sent-to": {
+        "segments": "workload"
+      }
+    },
+    {
+      "action": "send-via",
+      "segment": "workload",
+      "mode": "single-hop",
+      "when-sent-to": {
+        "segments": [
+          "workload"
+        ]
+      },
+      "via": {
+        "network-function-groups": [
+          "inspection"
+        ],
+        "with-edge-overrides": [
+          {
+            "edge-sets": [
+              [
+                "us-east-1",
+                "us-west-2"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-east-1",
+                "ap-northeast-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-east-1",
+                "ap-northeast-3"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-3"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-east-1",
+                "ap-southeast-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-west-2",
+                "ap-southeast-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-east-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "us-west-2"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          },
+          {
+            "edge-sets": [
+              [
+                "ap-southeast-1"
+              ]
+            ],
+            "use-edge-location": "ap-northeast-1"
+          }
+        ]
+      }
+    }
+  ]
+}
