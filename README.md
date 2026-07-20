@@ -12,6 +12,14 @@ RTO は障害発生 (検査経路の停止) から迂回完了 (ポリシー反�
 
 ### リージョン構成 (各 2 AZ)
 
+全体構成
+
+![全体構成](./docs/architecture_全体構成.png)
+
+ap-northeast-1%20詳細とルートテーブル
+
+![ap-northeast-1%20詳細とルートテーブル](./docs/architecture_ap-northeast-1%20詳細とルートテーブル.png)
+
 | リージョン | 略称 | 優先度 | 役割 |
 | --- | --- | --- | --- |
 | us-east-1 | use1 | 1 | NFG あり <br>- Inspection VPC <br>- HealthCheck VPC <br>- Workload VPC x2 |
@@ -55,6 +63,77 @@ EventBridge Scheduler (3 分間隔)
                -> ExecuteCoreNetworkChangeSet -> 実行完了をポーリング
                   (上限到達時は正常終了して次サイクルが引き継ぐ。実行はサーバー側で継続)
           (c) 全 NFG 障害 (failClose) -> ログのみ
+```
+
+図 1: 全体フロー (概要)
+
+```mermaid
+flowchart TD
+    S([Scheduler 3 分間隔]) --> HC["ヘルスチェック x6<br>(3 リージョン x 2 AZ 並列)"]
+    HC --> AGG["集計<br>avoid / replace / target / failClose"]
+    AGG --> NC{異常あり?}
+    NC -- "なし" --> PAR
+    NC -- "あり" --> W90["90 秒待機"]
+    W90 --> HC2["確認再測定 x6"]
+    HC2 --> AGG2["再集計<br>両回 unhealthy のみ確定"]
+    AGG2 --> CO{確定した異常あり?}
+    CO -- "なし" --> CC["ConfirmationCanceled<br>(検知取り消しを記録)"]
+    CC --> PAR
+    CO -- "あり" --> PAR["FailoverActions (Parallel)"]
+    PAR --> A["ブランチ A<br>片AZ障害: ReplaceRoute<br>(図 2)"]
+    PAR --> B["ブランチ B<br>リージョン障害: ポリシー書換<br>(図 3)"]
+```
+
+図 2: ブランチ A — ReplaceRoute (リージョンごとに並列 x3)
+
+```mermaid
+flowchart TD
+    NR{"このリージョンは<br>replaceTargets にある?"}
+    NR -- "いいえ" --> SKIP["SkipReplace"]
+    NR -- "はい" --> DR["DescribeRouteTables<br>RT ID と生存 AZ の endpoint を<br>タグから取得"]
+    DR --> A1{"AZ-a は障害?"}
+    A1 -- "はい" --> RA["ReplaceRoute (AZ-a の RT)<br>0/0 → 生存 AZ の endpoint"]
+    A1 -- "いいえ" --> B1
+    RA --> B1{"AZ-b は障害?"}
+    B1 -- "はい" --> RB["ReplaceRoute (AZ-b の RT)"]
+    B1 -- "いいえ" --> DONE
+    RB --> DONE["ReplaceRouteDone<br>(成功を記録)"]
+    DR -. "失敗" .-> FAIL["ReplaceRouteFailed<br>(記録して完走)"]
+    RA -. "失敗" .-> FAIL
+    RB -. "失敗" .-> FAIL
+```
+
+図 3: ブランチ B — ポリシー書換
+
+```mermaid
+flowchart TD
+    DEC{RegionFailoverDecision}
+    DEC -- "probe 全滅" --> FC["FailClose<br>(何もしない)"]
+    DEC -- "avoid なし" --> NOP["NoRegionFailover"]
+    DEC -- "avoid あり" --> GCN["GetCoreNetwork"]
+
+    GCN --> CNA{"AVAILABLE?"}
+    CNA -- "いいえ" --> SIP["SkipInProgress<br>(排他)"]
+    CNA -- "はい" --> GLP["GetLivePolicy"]
+
+    GLP --> MLA["MergeLiveAvoid<br>LIVE の避け済み集合と和集合<br>(sticky avoid)"]
+    MLA --> EFC{"和集合で全滅?"}
+    EFC -- "はい" --> FCE["FailCloseEffective"]
+    EFC -- "いいえ" --> AA{"LIVE は既に<br>望ましい状態?"}
+
+    AA -- "はい" --> SAA["SkipAlreadyApplied<br>(冪等)"]
+    AA -- "いいえ" --> PUT["PutCoreNetworkPolicy<br>override を生成して適用"]
+    PUT -. "競合" .-> PC["PutPolicyConflict"]
+
+    PUT --> GEN["生成待ちポーリング<br>10 秒 x 最大 30 回"]
+    GEN -- "READY_TO_EXECUTE" --> EXE["ExecuteChangeSet"]
+    GEN -- "生成失敗 / 上限" --> GF["GenerationFailed"]
+    GEN -- "OUT_OF_DATE" --> SS["SkipSuperseded"]
+
+    EXE --> POLL["実行待ちポーリング<br>30 秒 x 最大 30 回"]
+    POLL -- "成功" --> DONE["FailoverDone"]
+    POLL -- "失敗" --> PF["FailoverPolicyFailed"]
+    POLL -- "上限到達" --> STILL["StillExecuting<br>(次サイクルへ)"]
 ```
 
 自作の Lambda は **ヘルスチェックのみ** (Python 3.14)。集計 / ルート操作 / ポリシー操作はすべて JSONata SFN + AWS SDK 統合で実装している (cross-region 操作は CDK 生成の Singleton proxy Lambda を経由)。
