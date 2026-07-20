@@ -1,20 +1,80 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib/core';
-import { AwsCdkCloudWanNfgFailoverRoutingStack } from '../lib/aws-cdk-cloud-wan-nfg-failover-routing-stack';
+import * as cdk from "aws-cdk-lib/core";
+import {
+  CORE_STACK_REGION,
+  ORCHESTRATOR_REGION,
+  REGION_CONFIGS,
+} from "../lib/config";
+import { CoreStack } from "../lib/core-stack";
+import { RegionStack } from "../lib/region-stack";
+import { OrchestratorStack, ProbeTarget } from "../lib/orchestrator-stack";
+import { MonitoringStack } from "../lib/monitoring-stack";
 
 const app = new cdk.App();
-new AwsCdkCloudWanNfgFailoverRoutingStack(app, 'AwsCdkCloudWanNfgFailoverRoutingStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+const account = process.env.CDK_DEFAULT_ACCOUNT;
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+// Cloud WAN の中核 (Global Network / Core Network / baseline Policy)
+const coreStack = new CoreStack(app, "NfgFailoverCoreStack", {
+  env: { account, region: CORE_STACK_REGION },
+  crossRegionReferences: true,
 });
+
+// 各リージョンの Workload / Inspection / HealthCheck VPC
+const probeTargets: ProbeTarget[] = [];
+const probeAlarmArns: string[] = [];
+const nfgRegionStacks: RegionStack[] = [];
+for (const regionConfig of REGION_CONFIGS) {
+  const regionStack = new RegionStack(
+    app,
+    `NfgFailoverRegionStack-${regionConfig.region}`,
+    {
+      env: { account, region: regionConfig.region },
+      regionConfig,
+      coreNetworkId: coreStack.coreNetworkId,
+      coreNetworkArn: coreStack.coreNetworkArn,
+      crossRegionReferences: true,
+    },
+  );
+  // Core Network / Policy が先に存在している必要がある
+  regionStack.addDependency(coreStack);
+
+  // NFG リージョンのヘルスチェック Lambda を Orchestrator へ集約
+  if (regionStack.probeFunctions.length > 0) {
+    nfgRegionStacks.push(regionStack);
+    for (const probe of regionStack.probeFunctions) {
+      probeTargets.push({
+        region: regionConfig.region,
+        azLetter: probe.azLetter,
+        functionArn: probe.functionArn,
+      });
+      probeAlarmArns.push(probe.alarmArn);
+    }
+  }
+}
+
+// フェイルオーバーのオーケストレーター (us-west-2)
+const orchestratorStack = new OrchestratorStack(app, "NfgFailoverOrchestratorStack", {
+  env: { account, region: ORCHESTRATOR_REGION },
+  coreNetworkId: coreStack.coreNetworkId,
+  coreNetworkArn: coreStack.coreNetworkArn,
+  probeTargets,
+  crossRegionReferences: true,
+});
+orchestratorStack.addDependency(coreStack);
+// ヘルスチェック Lambda ARN の cross-region 参照 (SSM + カスタムリソース) が解決される前に
+// Orchestrator がデプロイされないよう、NFG RegionStack に依存させる。
+for (const regionStack of nfgRegionStacks) {
+  orchestratorStack.addDependency(regionStack);
+}
+
+// 運用者向け監視ダッシュボード (us-west-2)。オーケストレーターと同一リージョンのため
+// 通常の props 参照で足りる (Cloud WAN のメトリクスも us-west-2 に集約発行される)
+const monitoringStack = new MonitoringStack(app, "NfgFailoverMonitoringStack", {
+  env: { account, region: ORCHESTRATOR_REGION },
+  stateMachine: orchestratorStack.stateMachine,
+  orchestratorLogGroup: orchestratorStack.logGroup,
+  coreNetworkId: coreStack.coreNetworkId,
+  probeAlarmArns,
+  crossRegionReferences: true,
+});
+monitoringStack.addDependency(orchestratorStack);

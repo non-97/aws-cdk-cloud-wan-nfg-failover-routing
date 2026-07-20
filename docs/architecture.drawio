@@ -1,0 +1,728 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="全体構成" id="page1">
+    <mxGraphModel dx="1400" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3800" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cloud" value="AWS Cloud" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=0;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud_alt;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="3760" height="1560" as="geometry" />
+        </mxCell>
+        <mxCell id="r-use1" value="us-east-1 (優先度 1 / NFG あり)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=0;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="60" width="710" height="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="r-usw2" value="us-west-2 (優先度 4 / NFG なし・Core Network ホーム)" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="60" width="710" height="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="r-apne1" value="ap-northeast-1 (優先度 7 / NFG あり)" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="60" width="710" height="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="r-apne3" value="ap-northeast-3 (優先度 9 / NFG あり)" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="2280" y="60" width="710" height="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="r-apse1" value="ap-southeast-1 (優先度 11 / NFG なし)" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="3020" y="60" width="710" height="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="cwan-box" value="Cloud WAN Core Network" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#232F3E;verticalAlign=top;align=left;spacingLeft=44;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="3630" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="cwan-icon" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloud_wan;" vertex="1" parent="1">
+          <mxGeometry x="88" y="724" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="nfg-band" value="Inspection NFG (3 リージョンにエッジ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=none;opacity=70;fontSize=14;fontStyle=1;fontColor=#4D27AA;" vertex="1" parent="1">
+          <mxGeometry x="160" y="760" width="3480" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="seg-band" value="Workload Segment (5 リージョンにエッジ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D4E7F7;strokeColor=none;fontSize=14;fontStyle=1;fontColor=#147EBA;" vertex="1" parent="1">
+          <mxGeometry x="160" y="860" width="3480" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sendto" value="send-to: egress を優先 NFG の検査へ" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;fontColor=#CC0000;strokeColor=#CC0000;strokeWidth=3;endArrow=block;endFill=1;verticalAlign=bottom;exitX=0.13;exitY=0;entryX=0.13;entryY=1;" edge="1" parent="1" source="seg-band" target="nfg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sendvia" value="send-via single-hop: east-west を NFG の検査経由に" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;fontColor=#0066CC;strokeColor=#0066CC;strokeWidth=3;endArrow=block;endFill=1;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1560" y="858" as="sourcePoint" />
+            <mxPoint x="1700" y="858" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1560" y="790" />
+              <mxPoint x="1700" y="790" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u-ivpc" value="Inspection VPC 10.0.0.0/16" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="100" width="430" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="u-igw" value="IGW" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.internet_gateway;" vertex="1" parent="1">
+          <mxGeometry x="288" y="83" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u-iaza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="102" y="170" width="198" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="u-iazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="170" width="198" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ipa" value="Public subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="112" y="195" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ipa-i" value="NAT Gateway A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="179" y="249" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ifa" value="Firewall subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="112" y="345" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ifa-i" value="Firewall Endpoint A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="179" y="399" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ica" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="112" y="495" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ica-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="179" y="549" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ipb" value="Public subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="320" y="195" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ipb-i" value="NAT Gateway B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="387" y="249" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ifb" value="Firewall subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="320" y="345" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u-ifb-i" value="Firewall Endpoint B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="387" y="399" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-icb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="320" y="495" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="u-icb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="387" y="549" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hvpc" value="HealthCheck VPC 10.2.0.0/16" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="540" y="100" width="215" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="u-haza" value="AZ A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="170" width="195" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hsa" value="HealthCheck subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="195" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hsa-i" value="ヘルスチェック Lambda A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="626" y="239" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="325" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hazb" value="AZ B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="410" width="195" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hsb" value="HealthCheck subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="435" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hsb-i" value="ヘルスチェック Lambda B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="626" y="479" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="u-hcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="565" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wvpc" value="Workload VPC x2 (10.1.0.0/16 / 10.3.0.0/16) 各 VPC が同構成" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1000" width="665" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="u-waza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="102" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wsa" value="Workload subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="114" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wsa-i" value="テスト用 EC2 A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="191" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wsa-e" value="EIC Endpoint&#10;(AZ-a のみ)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" vertex="1" parent="1">
+          <mxGeometry x="279" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="114" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="235" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="428" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wsb" value="Workload subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wsb-i" value="テスト用 EC2 B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="561" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="u-wcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="561" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="u-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#8C4FFF;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0.0417;entryY=0;" edge="1" parent="1" source="u-ivpc" target="nfg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="u-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0.1401;entryY=0;" edge="1" parent="1" source="u-hvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="u-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=0;entryX=0.0754;entryY=1;" edge="1" parent="1" source="u-wvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="n1-ivpc" value="Inspection VPC 10.20.0.0/16" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="100" width="430" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-igw" value="IGW" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.internet_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1768" y="83" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-iaza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1582" y="170" width="198" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-iazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="170" width="198" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ipa" value="Public subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1592" y="195" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ipa-i" value="NAT Gateway A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1659" y="249" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ifa" value="Firewall subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1592" y="345" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ifa-i" value="Firewall Endpoint A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="1659" y="399" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ica" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1592" y="495" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ica-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="1659" y="549" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ipb" value="Public subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="195" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ipb-i" value="NAT Gateway B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1867" y="249" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ifb" value="Firewall subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="345" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-ifb-i" value="Firewall Endpoint B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="1867" y="399" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-icb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="495" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-icb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="1867" y="549" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hvpc" value="HealthCheck VPC 10.22.0.0/16" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2020" y="100" width="215" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-haza" value="AZ A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2030" y="170" width="195" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hsa" value="HealthCheck subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2040" y="195" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hsa-i" value="ヘルスチェック Lambda A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="2106" y="239" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2040" y="325" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hazb" value="AZ B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2030" y="410" width="195" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hsb" value="HealthCheck subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2040" y="435" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hsb-i" value="ヘルスチェック Lambda B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="2106" y="479" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-hcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2040" y="565" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wvpc" value="Workload VPC x2 (10.21.0.0/16 / 10.23.0.0/16) 各 VPC が同構成" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="1000" width="665" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-waza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1582" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wsa" value="Workload subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1594" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wsa-i" value="テスト用 EC2 A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="1671" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wsa-e" value="EIC Endpoint&#10;(AZ-a のみ)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" vertex="1" parent="1">
+          <mxGeometry x="1759" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1594" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="1715" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1908" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wsb" value="Workload subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1920" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wsb-i" value="テスト用 EC2 B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="2041" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1920" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-wcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="2041" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#8C4FFF;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0.467;entryY=0;" edge="1" parent="1" source="n1-ivpc" target="nfg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0.5654;entryY=0;" edge="1" parent="1" source="n1-hvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n1-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=0;entryX=0.5007;entryY=1;" edge="1" parent="1" source="n1-wvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="n3-ivpc" value="Inspection VPC 10.30.0.0/16" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2310" y="100" width="430" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-igw" value="IGW" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.internet_gateway;" vertex="1" parent="1">
+          <mxGeometry x="2508" y="83" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-iaza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2322" y="170" width="198" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-iazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2530" y="170" width="198" height="475" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ipa" value="Public subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2332" y="195" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ipa-i" value="NAT Gateway A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="2399" y="249" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ifa" value="Firewall subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2332" y="345" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ifa-i" value="Firewall Endpoint A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="2399" y="399" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ica" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2332" y="495" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ica-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="2399" y="549" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ipb" value="Public subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="195" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ipb-i" value="NAT Gateway B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="2607" y="249" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ifb" value="Firewall subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="345" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-ifb-i" value="Firewall Endpoint B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="2607" y="399" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-icb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="495" width="178" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-icb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="2607" y="549" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hvpc" value="HealthCheck VPC 10.32.0.0/16" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2760" y="100" width="215" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-haza" value="AZ A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2770" y="170" width="195" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hsa" value="HealthCheck subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2780" y="195" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hsa-i" value="ヘルスチェック Lambda A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="2846" y="239" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2780" y="325" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hazb" value="AZ B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2770" y="410" width="195" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hsb" value="HealthCheck subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2780" y="435" width="175" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hsb-i" value="ヘルスチェック Lambda B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="2846" y="479" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-hcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2780" y="565" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wvpc" value="Workload VPC x2 (10.31.0.0/16 / 10.33.0.0/16) 各 VPC が同構成" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2310" y="1000" width="665" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-waza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2322" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wsa" value="Workload subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2334" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wsa-i" value="テスト用 EC2 A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="2411" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wsa-e" value="EIC Endpoint&#10;(AZ-a のみ)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" vertex="1" parent="1">
+          <mxGeometry x="2499" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2334" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="2455" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2648" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wsb" value="Workload subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2660" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wsb-i" value="テスト用 EC2 B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="2781" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="2660" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-wcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="2781" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#8C4FFF;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0.6796;entryY=0;" edge="1" parent="1" source="n3-ivpc" target="nfg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0.778;entryY=0;" edge="1" parent="1" source="n3-hvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n3-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=0;entryX=0.7134;entryY=1;" edge="1" parent="1" source="n3-wvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+<mxCell id="w2-wvpc" value="Workload VPC x2 (10.11.0.0/16 / 10.13.0.0/16) 各 VPC が同構成" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="830" y="1000" width="665" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-waza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="842" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wsa" value="Workload subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="854" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wsa-i" value="テスト用 EC2 A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="931" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wsa-e" value="EIC Endpoint&#10;(AZ-a のみ)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" vertex="1" parent="1">
+          <mxGeometry x="1019" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="854" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="975" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1168" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wsb" value="Workload subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wsb-i" value="テスト用 EC2 B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="1301" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-wcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="1301" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=0;entryX=0.2881;entryY=1;" edge="1" parent="1" source="w2-wvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wvpc" value="Workload VPC x2 (10.41.0.0/16 / 10.43.0.0/16) 各 VPC が同構成" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="3050" y="1000" width="665" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-waza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="3062" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wsa" value="Workload subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="3074" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wsa-i" value="テスト用 EC2 A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="3151" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wsa-e" value="EIC Endpoint&#10;(AZ-a のみ)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" vertex="1" parent="1">
+          <mxGeometry x="3239" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="3074" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="3195" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="3388" y="1060" width="310" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wsb" value="Workload subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="3400" y="1090" width="286" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wsb-i" value="テスト用 EC2 B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="3521" y="1169" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="3400" y="1300" width="286" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-wcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="3521" y="1374" width="48" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=0.5;exitY=0;entryX=0.926;entryY=1;" edge="1" parent="1" source="s1-wvpc" target="seg-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-orch" value="フェイルオーバーオーケストレーター" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_step_functions_workflow;strokeColor=#CD2264;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#CD2264;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="830" y="140" width="650" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-sfn" value="Step Functions&#10;ヘルスチェック集計と切替" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F34482;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="966" y="210" width="52" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-sch" value="EventBridge Scheduler&#10;3 分間隔で起動" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F34482;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="1">
+          <mxGeometry x="1129" y="210" width="52" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-cw" value="CloudWatch&#10;ダッシュボードとアラーム" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F34482;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch_2;" vertex="1" parent="1">
+          <mxGeometry x="1291" y="210" width="52" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="w2-note" value="GlobalNetwork / CoreNetwork のホームリージョン。各リージョンのヘルスチェック Lambda を定期実行で呼び出し、片AZ障害は ReplaceRoute、リージョン障害は Core Network Policy の書き換えで対処する" style="text;html=1;align=left;verticalAlign=top;fontSize=10;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="870" y="310" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-note" value="NFG なしリージョン。両端に NFG が無い通信ペアの検査先選択を観測するために配置。egress の優先 NFG は最近傍の ap-northeast-1" style="text;html=1;align=left;verticalAlign=top;fontSize=10;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="3060" y="140" width="620" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="ap-northeast-1 詳細とルートテーブル" id="page2">
+    <mxGraphModel dx="1400" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2660" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p2r" value="ap-northeast-1 (他の NFG リージョンも同構成)" style="points=[[0,0],[1,0],[1,1],[0,1]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;container=0;collapsible=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="40" width="1830" height="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wvpc" value="Workload VPC 1 (10.21.0.0/16) VPC 2 も同構成" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="90" width="500" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-waza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="432" y="145" width="235" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wsa" value="Workload subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="444" y="172" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wsa-i" value="テスト用 EC2 A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="484" y="231" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wsa-e" value="EIC Endpoint" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.endpoint;" vertex="1" parent="1">
+          <mxGeometry x="572" y="231" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="444" y="335" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="528" y="394" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="675" y="145" width="235" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wsb" value="Workload subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="687" y="172" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wsb-i" value="テスト用 EC2 B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="1">
+          <mxGeometry x="770" y="231" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="687" y="335" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-wcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="770" y="394" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hvpc" value="HealthCheck VPC (10.22.0.0/16)" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="610" width="500" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-haza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="432" y="665" width="235" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hsa" value="HealthCheck subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="444" y="692" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hsa-i" value="ヘルスチェック Lambda A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="528" y="751" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hca" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="444" y="855" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hca-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="528" y="914" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="675" y="665" width="235" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hsb" value="HealthCheck subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="687" y="692" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hsb-i" value="ヘルスチェック Lambda B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="770" y="751" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hcb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="687" y="855" width="211" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-hcb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="770" y="914" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-cwan" value="Cloud WAN Core Network" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#232F3E;verticalAlign=top;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="990" y="90" width="220" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-seg" value="Workload Segment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D4E7F7;strokeColor=none;fontSize=11;fontStyle=1;fontColor=#147EBA;horizontal=0;" vertex="1" parent="1">
+          <mxGeometry x="1015" y="130" width="60" height="870" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-nfg" value="Inspection NFG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=none;opacity=70;fontSize=11;fontStyle=1;fontColor=#4D27AA;horizontal=0;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="130" width="60" height="870" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ivpc" value="Inspection VPC (10.20.0.0/16)" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=11;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc2;strokeColor=#8C4FFF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#8C4FFF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="90" width="830" height="940" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-iaza" value="Availability Zone A" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1302" y="150" width="806" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ica" value="Cloud WAN subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="210" width="250" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ica-i" value="attachment ENI A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="1418" y="324" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ifa" value="Firewall subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="210" width="250" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ifa-i" value="Firewall Endpoint A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="1683" y="324" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ipa" value="Public subnet A" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1845" y="210" width="250" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ipa-i" value="NAT Gateway A" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1948" y="324" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-iazb" value="Availability Zone B" style="rounded=1;fillColor=none;strokeColor=#147EBA;dashed=1;dashPattern=2 4;verticalAlign=top;fontColor=#147EBA;fontSize=10;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1302" y="570" width="806" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-icb" value="Cloud WAN subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="630" width="250" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-icb-i" value="attachment ENI B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.elastic_network_interface;" vertex="1" parent="1">
+          <mxGeometry x="1418" y="744" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ifb" value="Firewall subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#00A4A6;fillColor=#E6F6F7;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="630" width="250" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ifb-i" value="Firewall Endpoint B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.network_firewall;" vertex="1" parent="1">
+          <mxGeometry x="1683" y="744" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ipb" value="Public subnet B" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=10;fontStyle=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#7AA116;fillColor=#F2F6E8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1845" y="630" width="250" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-ipb-i" value="NAT Gateway B" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1948" y="744" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-igw" value="IGW" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.internet_gateway;" vertex="1" parent="1">
+          <mxGeometry x="2098" y="538" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.1954;" edge="1" parent="1" source="p2-wvpc" target="p2-seg">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#4A9ED8;strokeWidth=2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7931;" edge="1" parent="1" source="p2-hvpc" target="p2-seg">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#8C4FFF;strokeWidth=2;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.4943;" edge="1" parent="1" source="p2-ivpc" target="p2-nfg">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-ws" value="&lt;b&gt;Workload subnet 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.21.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="40" y="201" width="320" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-ws-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-t-ws" target="p2-wsa">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-wc" value="&lt;b&gt;Workload CWAN subnet 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.21.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="40" y="374" width="320" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-wc-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-t-wc" target="p2-wca">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-hs" value="&lt;b&gt;HealthCheck subnet 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.22.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="40" y="721" width="320" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-hs-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-t-hs" target="p2-hsa">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-hc" value="&lt;b&gt;HealthCheck CWAN subnet 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.22.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="40" y="894" width="320" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-hc-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-t-hc" target="p2-hca">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-ca" value="&lt;b&gt;Inspection CWAN subnet A 用 VPC route table&lt;br&gt;(ReplaceRoute の付け替え対象)&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.20.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;Firewall Endpoint A&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="90" width="360" height="108" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-ca-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-ica" target="p2-t-ca">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1440" y="482" /><mxPoint x="2225" y="482" /><mxPoint x="2225" y="144" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-fa" value="&lt;b&gt;Firewall subnet A 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.20.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;NAT Gateway A&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.0.0.0/8&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;172.16.0.0/12&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;192.168.0.0/16&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="240" width="360" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-fa-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-ifa" target="p2-t-fa">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1705" y="497" /><mxPoint x="2240" y="497" /><mxPoint x="2240" y="309" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-pa" value="&lt;b&gt;Public subnet A 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.20.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;IGW&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.0.0.0/8&lt;/td&gt;&lt;td&gt;Firewall Endpoint A&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;172.16.0.0/12&lt;/td&gt;&lt;td&gt;Firewall Endpoint A&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;192.168.0.0/16&lt;/td&gt;&lt;td&gt;Firewall Endpoint A&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="420" width="360" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-pa-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-ipa" target="p2-t-pa">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1970" y="512" /><mxPoint x="2255" y="512" /><mxPoint x="2255" y="489" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-cb" value="&lt;b&gt;Inspection CWAN subnet B 用 VPC route table&lt;br&gt;(ReplaceRoute の付け替え対象)&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.20.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;Firewall Endpoint B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="600" width="360" height="108" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-cb-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-icb" target="p2-t-cb">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1440" y="902" /><mxPoint x="2225" y="902" /><mxPoint x="2225" y="654" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-fb" value="&lt;b&gt;Firewall subnet B 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.20.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;NAT Gateway B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.0.0.0/8&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;172.16.0.0/12&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;192.168.0.0/16&lt;/td&gt;&lt;td&gt;Core Network&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="750" width="360" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-fb-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-ifb" target="p2-t-fb">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1705" y="917" /><mxPoint x="2240" y="917" /><mxPoint x="2240" y="819" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p2-t-pb" value="&lt;b&gt;Public subnet B 用 VPC route table&lt;/b&gt;&lt;br&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; style=&quot;border-collapse:collapse;font-size:10px;width:100%;&quot;&gt;&lt;tr style=&quot;background-color:#D5E8D4;&quot;&gt;&lt;th style=&quot;text-align:left;&quot;&gt;送信先CIDR&lt;/th&gt;&lt;th style=&quot;text-align:left;&quot;&gt;ターゲット&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.20.0.0/16&lt;/td&gt;&lt;td&gt;local&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;0.0.0.0/0&lt;/td&gt;&lt;td&gt;IGW&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;10.0.0.0/8&lt;/td&gt;&lt;td&gt;Firewall Endpoint B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;172.16.0.0/12&lt;/td&gt;&lt;td&gt;Firewall Endpoint B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;192.168.0.0/16&lt;/td&gt;&lt;td&gt;Firewall Endpoint B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="930" width="360" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-t-pb-e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=oval;endFill=1;startArrow=oval;startFill=1;strokeColor=#7AA116;strokeWidth=2;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-ipb" target="p2-t-pb">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1970" y="932" /><mxPoint x="2255" y="932" /><mxPoint x="2255" y="999" /></Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

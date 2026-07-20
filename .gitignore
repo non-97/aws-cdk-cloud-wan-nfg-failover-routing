@@ -6,3 +6,10 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Python (Lambda アセット内に混入すると CDK のアセットハッシュが変わる)
+__pycache__/
+*.pyc
+
+.pnpm-store
+.claude
