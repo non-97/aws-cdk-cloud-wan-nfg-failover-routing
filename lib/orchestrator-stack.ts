@@ -22,8 +22,11 @@ import {
 /** 各 NFG リージョン×AZ のヘルスチェック Lambda (Orchestrator が cross-region invoke) */
 export interface ProbeTarget {
   readonly region: string;
-  readonly azLetter: string;
+  /** 実 AZ 名 (us-east-1a 等) */
+  readonly azName: string;
   readonly functionArn: string;
+  /** AWS/Lambda メトリクスの FunctionName ディメンション用 */
+  readonly functionName: string;
 }
 
 export interface OrchestratorStackProps extends cdk.StackProps {
@@ -71,7 +74,7 @@ export class OrchestratorStack extends cdk.Stack {
       for (const t of props.probeTargets) {
         const invoke = tasks.CallAwsServiceCrossRegion.jsonata(
           this,
-          `${prefix}-${t.region}-${t.azLetter}`,
+          `${prefix}-${t.azName}`,
         {
           service: "lambda",
           action: "invoke",
@@ -90,7 +93,7 @@ export class OrchestratorStack extends cdk.Stack {
           // healthy キー欠落も `= true` の比較で false になる (fail-close 方向)。
           outputs: {
             region: t.region,
-            azLetter: t.azLetter,
+            azName: t.azName,
             healthy:
               "{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}",
           },
@@ -98,8 +101,8 @@ export class OrchestratorStack extends cdk.Stack {
       );
         // 応答なし (タイムアウト) / エラーは「そのAZ障害」とみなす
         invoke.addCatch(
-          sfn.Pass.jsonata(this, `${prefix}Fail-${t.region}-${t.azLetter}`, {
-            outputs: { region: t.region, azLetter: t.azLetter, healthy: false },
+          sfn.Pass.jsonata(this, `${prefix}Fail-${t.azName}`, {
+            outputs: { region: t.region, azName: t.azName, healthy: false },
           }),
           { errors: ["States.ALL"] },
         );
@@ -131,8 +134,8 @@ export class OrchestratorStack extends cdk.Stack {
       "    $r := $;",
       "    {",
       '      "region": $r,',
-      '      "down": [$results[region = $r and healthy = false].azLetter],',
-      '      "up": [$results[region = $r and healthy = true].azLetter]',
+      '      "down": [$results[region = $r and healthy = false].azName],',
+      '      "up": [$results[region = $r and healthy = true].azName]',
       "    }",
       "  );",
       "  $avoid := [$perRegion[$count(up) = 0].region];",
@@ -154,7 +157,7 @@ export class OrchestratorStack extends cdk.Stack {
       ")",
     ].join("\n");
 
-    // 1 回目の結果を probe1 に保持する (確認再測定のマージで (region, azLetter) 突合に使う)
+    // 1 回目の結果を probe1 に保持する (確認再測定のマージで (region, az) 突合に使う)
     const aggregate = sfn.Pass.jsonata(this, "Aggregate", {
       assign: {
         probe1: "{% $states.input %}",
@@ -173,17 +176,17 @@ export class OrchestratorStack extends cdk.Stack {
     });
 
     // (a) ReplaceRoute: 各 NFG リージョン x AZ を静的展開し、対象なら付け替え
-    const azLettersByRegion = Object.fromEntries(
+    const azsByRegion = Object.fromEntries(
       nfgRegions.map((r) => [
         r,
         props.probeTargets
           .filter((t) => t.region === r)
-          .map((t) => t.azLetter),
+          .map((t) => t.azName),
       ]),
     );
     const replaceRouteChain = this.buildReplaceRouteBranch(
       nfgRegions,
-      azLettersByRegion,
+      azsByRegion,
     );
     failoverParallel.branch(replaceRouteChain);
 
@@ -213,8 +216,8 @@ export class OrchestratorStack extends cdk.Stack {
     const mergedResultsExpr = [
       "[$probe1.(",
       "  $p := $;",
-      "  $m := $states.input[region = $p.region and azLetter = $p.azLetter][0];",
-      '  { "region": $p.region, "azLetter": $p.azLetter, "healthy": $p.healthy or $m.healthy = true }',
+      "  $m := $states.input[region = $p.region and azName = $p.azName][0];",
+      '  { "region": $p.region, "azName": $p.azName, "healthy": $p.healthy or $m.healthy = true }',
       ")]",
     ].join("\n");
     const aggregateConfirm = sfn.Pass.jsonata(this, "AggregateConfirm", {
@@ -256,6 +259,30 @@ export class OrchestratorStack extends cdk.Stack {
     });
     this.logGroup = logGroup;
 
+    // メトリクスフィルターのディメンション値はリテラルを受け付けず、$.フィールド名 の
+    // セレクタしか許されない (リテラルを渡すとデプロイ時に "Invalid metric transformation:
+    // dimension value must be valid selector" で失敗する)。SFN の実行ログには Core Network
+    // を示すフィールドが無いため、Transformer で coreNetworkId を注入してから参照する。
+    // Transformer は先頭のプロセッサがパーサー型である必要があるため parseJson を置く。
+    // L2 の logs.Transformer は子の CfnTransformer を this ではなく scope 配下に作るため
+    // (aws-cdk-lib 2.260.0 で確認)、Construct ID が無視され addDependency も効かない。
+    // ここでは L1 を直接使う
+    const logTransformer = new logs.CfnTransformer(
+      this,
+      "OrchestratorLogTransformer",
+      {
+        logGroupIdentifier: logGroup.logGroupName,
+        transformerConfig: [
+          { parseJson: { source: "@message" } },
+          {
+            addKeys: {
+              entries: [{ key: "coreNetworkId", value: props.coreNetworkId }],
+            },
+          },
+        ],
+      },
+    );
+
     // 実行ログから運用イベントをカスタムメトリクス化する (docs の「実行結果の読み方」と対応)。
     // 注意: SFN 実行ログの JSON スキーマ (type / details.name) は公式リファレンスに明記が
     // ないため (API の HistoryEvent から type 値のみ確認済み)、パターンの実マッチは
@@ -264,14 +291,21 @@ export class OrchestratorStack extends cdk.Stack {
       id: string,
       metricName: string,
       pattern: string,
-    ): logs.MetricFilter =>
-      new logs.MetricFilter(this, id, {
+    ): logs.MetricFilter => {
+      const filter = new logs.MetricFilter(this, id, {
         logGroup,
         metricNamespace: MONITORING.namespace,
         metricName,
         filterPattern: logs.FilterPattern.literal(pattern),
         metricValue: "1",
+        // Transformer が注入した coreNetworkId を参照する
+        dimensions: { CoreNetwork: "$.coreNetworkId" },
+        applyOnTransformedLogs: true,
       });
+      // 変換後ログを参照するため Transformer の作成を先行させる
+      filter.node.addDependency(logTransformer);
+      return filter;
+    };
     // fail-close の Pass は 2 ステートある (probe 速路の FailClose / 和集合判定の
     // FailCloseEffective) ため両方を OR で拾う
     stateMetric(
@@ -324,8 +358,8 @@ export class OrchestratorStack extends cdk.Stack {
     // 誤検知 (データプレーンは健全なのに退避する) の切り分けに使う
     const probeInvokeErrorNames = props.probeTargets
       .flatMap((t) => [
-        `$.details.name = "HealthCheckFail-${t.region}-${t.azLetter}"`,
-        `$.details.name = "HealthCheckConfirmFail-${t.region}-${t.azLetter}"`,
+        `$.details.name = "HealthCheckFail-${t.azName}"`,
+        `$.details.name = "HealthCheckConfirmFail-${t.azName}"`,
       ])
       .join(" || ");
     stateMetric(
@@ -373,12 +407,26 @@ export class OrchestratorStack extends cdk.Stack {
     // 立ち上がり完了を確認してから手動で有効化する (README のデプロイ手順)。
     // CloudFormation 更新のたびに無効へ戻るのは意図した安全側の挙動で、
     // 有効化忘れは ExecutionStoppedAlarm (15 分実行なし) が検知する
+    // ダッシュボードの SEARCH 式で他のスケジュールと分離するため専用グループに置く
+    const scheduleGroup = new scheduler.ScheduleGroup(
+      this,
+      "FailoverScheduleGroup",
+      {
+        scheduleGroupName: MONITORING.scheduleGroupName,
+      },
+    );
+
     new scheduler.Schedule(this, "FailoverSchedule", {
-      scheduleName: "nfg-failover-health-check",
+      // AWS::Scheduler::Schedule の primaryIdentifier は Name のみで GroupName を含まない。
+      // グループを変えるだけの更新は UpdateSchedule が新グループ側でスケジュールを見つけられず
+      // NotFound で失敗するため、グループ変更時は名前も変えて置換させる必要がある
+      // (2026-07-28 実機確認)。名前はアカウント内で衝突しない固有の値にする
+      scheduleName: "nfg-failover-orchestrator",
       schedule: scheduler.ScheduleExpression.rate(cdk.Duration.minutes(3)),
       target: new schedulerTargets.StepFunctionsStartExecution(stateMachine, {}),
       description: "Cloud WAN NFG failover health check (level-triggered)",
       enabled: false,
+      scheduleGroup,
     });
   }
 
@@ -390,7 +438,7 @@ export class OrchestratorStack extends cdk.Stack {
    */
   private buildReplaceRouteBranch(
     nfgRegions: string[],
-    azLettersByRegion: Record<string, string[]>,
+    azsByRegion: Record<string, string[]>,
   ): sfn.IChainable {
     // 各 NFG リージョンの判定を 1 つの Parallel に集約し、複数リージョン同時の片AZ障害を並列処理する
     const parallel = new sfn.Parallel(this, "ReplaceRouteParallel", {
@@ -399,7 +447,7 @@ export class OrchestratorStack extends cdk.Stack {
     });
 
     for (const region of nfgRegions) {
-      const azLetters = azLettersByRegion[region];
+      const azList = azsByRegion[region];
       const describe = tasks.CallAwsServiceCrossRegion.jsonata(
         this,
         `DescribeRt-${region}`,
@@ -425,9 +473,9 @@ export class OrchestratorStack extends cdk.Stack {
           // NF endpoint を抽出する。向け先は RT に焼き込んだ failover-endpoint タグが
           // 唯一のソース (RT の現在の 0/0 から推測しない。レビュー指摘 2)
           assign: Object.fromEntries([
-            ...azLetters.map((az) => [
-              `rtId${az.toUpperCase()}`,
-              `{% ($rts := $states.result.RouteTables; $rts[Tags[Key = "${CLOUDWAN.tagKey.failoverAz}"].Value = "${az}"][0].RouteTableId) %}`,
+            ...azList.map((azName) => [
+              `rtId${azName.slice(-1).toUpperCase()}`,
+              `{% ($rts := $states.result.RouteTables; $rts[Tags[Key = "${CLOUDWAN.tagKey.failoverAz}"].Value = "${azName}"][0].RouteTableId) %}`,
             ]),
             [
               "survivorEndpoint",
@@ -460,32 +508,32 @@ export class OrchestratorStack extends cdk.Stack {
 
       // AZ ごとの分岐を末尾 (ReplaceRouteDone) から前へ組む。各 AZ の Choice は
       // 「その AZ が failedAzs に含まれるなら ReplaceRt へ、含まれないなら次の AZ 判定へ」
-      const azChainStart = [...azLetters]
+      const azChainStart = [...azList]
         .reverse()
-        .reduce<sfn.IChainable>((next, az) => {
+        .reduce<sfn.IChainable>((next, azName) => {
           const replace = tasks.CallAwsServiceCrossRegion.jsonata(
             this,
-            `ReplaceRt-${region}-${az}`,
+            `ReplaceRt-${azName}`,
             {
               service: "ec2",
               action: "replaceRoute",
               region,
               parameters: {
-                RouteTableId: `{% $rtId${az.toUpperCase()} %}`,
+                RouteTableId: `{% $rtId${azName.slice(-1).toUpperCase()} %}`,
                 DestinationCidrBlock: "0.0.0.0/0",
                 VpcEndpointId: "{% $survivorEndpoint %}",
               },
               iamResources: ["*"],
               iamAction: "ec2:ReplaceRoute",
-              outputs: { region, az, replaced: true },
+              outputs: { region, azName, replaced: true },
             },
           );
           replace.addCatch(replaceFailed, { errors: ["States.ALL"] });
           replace.next(next);
-          const needAz = sfn.Choice.jsonata(this, `NeedReplaceAz-${region}-${az}`);
+          const needAz = sfn.Choice.jsonata(this, `NeedReplaceAz-${azName}`);
           needAz.when(
             sfn.Condition.jsonata(
-              `{% "${az}" in $agg.replaceTargets[region = "${region}"][0].failedAzs %}`,
+              `{% "${azName}" in $agg.replaceTargets[region = "${region}"][0].failedAzs %}`,
             ),
             replace,
           );

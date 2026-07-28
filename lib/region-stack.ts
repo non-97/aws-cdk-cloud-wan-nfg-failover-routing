@@ -4,6 +4,7 @@ import { RegionConfig } from "./config";
 import {
   HealthCheckVpc,
   InspectionVpc,
+  NatGatewayRef,
   ProbeFunctionRef,
   WorkloadVpc,
 } from "./constructs";
@@ -27,6 +28,12 @@ export interface RegionStackProps extends cdk.StackProps {
 export class RegionStack extends cdk.Stack {
   /** このリージョンのヘルスチェック Lambda 参照 (NFG なしリージョンは空配列) */
   public readonly probeFunctions: ProbeFunctionRef[];
+  /** このリージョンの unhealthy 継続アラーム ARN (NFG なしリージョンは undefined) */
+  public readonly probeAlarmArn?: string;
+  /** このリージョンの Network Firewall 名 (NFG なしリージョンは undefined) */
+  public readonly firewallName?: string;
+  /** このリージョンの NAT ゲートウェイ (NFG なしリージョンは空配列) */
+  public readonly natGateways: NatGatewayRef[];
 
   constructor(scope: Construct, id: string, props: RegionStackProps) {
     super(scope, id, props);
@@ -43,13 +50,15 @@ export class RegionStack extends cdk.Stack {
     });
 
     if (regionConfig.inspectionCidr && regionConfig.healthCheckCidr) {
-      new InspectionVpc(this, "InspectionVpc", {
+      const inspection = new InspectionVpc(this, "InspectionVpc", {
         vpcCidr: regionConfig.inspectionCidr,
         availabilityZones: regionConfig.availabilityZones,
         coreNetworkId,
         coreNetworkArn,
         regionLabel: regionConfig.region,
       });
+      this.firewallName = inspection.firewallName;
+      this.natGateways = inspection.natGateways;
 
       const healthCheck = new HealthCheckVpc(this, "HealthCheckVpc", {
         vpcCidr: regionConfig.healthCheckCidr,
@@ -58,8 +67,10 @@ export class RegionStack extends cdk.Stack {
         coreNetworkArn,
       });
       this.probeFunctions = healthCheck.probeFunctions;
+      this.probeAlarmArn = healthCheck.probeAlarmArn;
     } else {
       this.probeFunctions = [];
+      this.natGateways = [];
     }
   }
 }

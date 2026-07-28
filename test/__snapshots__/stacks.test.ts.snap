@@ -266,6 +266,12 @@ exports[`MonitoringStack snapshot 1`] = `
             "Label": "ConfirmationCanceled",
             "MetricStat": {
               "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "CoreNetwork",
+                    "Value": "core-network-0000",
+                  },
+                ],
                 "MetricName": "OrchestratorConfirmationCanceled",
                 "Namespace": "NfgFailover",
               },
@@ -313,6 +319,12 @@ exports[`MonitoringStack snapshot 1`] = `
             "Label": "fail-close",
             "MetricStat": {
               "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "CoreNetwork",
+                    "Value": "core-network-0000",
+                  },
+                ],
                 "MetricName": "OrchestratorFailClose",
                 "Namespace": "NfgFailover",
               },
@@ -382,15 +394,15 @@ exports[`MonitoringStack snapshot 1`] = `
                   "Arn",
                 ],
               },
-              "","arn:aws:cloudwatch:us-east-1:111111111111:alarm:probe-a","arn:aws:cloudwatch:us-east-1:111111111111:alarm:probe-b"]}},{"type":"text","width":4,"height":4,"x":0,"y":4,"properties":{"markdown":"## 参考情報\\n0 以外が出たら docs/failure-scenarios.md の「実行結果の読み方」を確認。\\n\\ntier 2 接続先利用回数はサードパーティの疎通先への接続が発生した回数で、平常時は 0 が正常値"}},{"type":"metric","width":4,"height":4,"x":4,"y":4,"properties":{"view":"singleValue","title":"fail-close 回数 (= 全リージョンの NFG 断)","region":"",
+              "","arn:aws:cloudwatch:us-east-1:111111111111:alarm:probe-a","arn:aws:cloudwatch:us-east-1:111111111111:alarm:probe-b"]}},{"type":"text","width":4,"height":4,"x":0,"y":4,"properties":{"markdown":"## 参考情報\\n0 以外が出たら docs/failure-scenarios.md の「実行結果の読み方」を確認。\\n\\ntier 2 接続先利用回数はサードパーティの疎通先への接続が発生した回数で、平常時は 0 が正常値"}},{"type":"metric","width":4,"height":4,"x":4,"y":4,"properties":{"view":"singleValue","title":"fail-close 回数 (= 全リージョンの NFG アタッチメント断)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","OrchestratorFailClose",{"label":"fail-close","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":4,"height":4,"x":8,"y":4,"properties":{"view":"singleValue","title":"フェイルオーバー完了回数","region":"",
+              "","metrics":[["NfgFailover","OrchestratorFailClose","CoreNetwork","core-network-0000",{"label":"fail-close","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":4,"height":4,"x":8,"y":4,"properties":{"view":"singleValue","title":"フェイルオーバー完了回数","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","OrchestratorFailoverDone",{"label":"FailoverDone","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":4,"height":4,"x":12,"y":4,"properties":{"view":"singleValue","title":"オーケストラーSFn 実行失敗回数","region":"",
+              "","metrics":[["NfgFailover","OrchestratorFailoverDone","CoreNetwork","core-network-0000",{"label":"FailoverDone","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":4,"height":4,"x":12,"y":4,"properties":{"view":"singleValue","title":"オーケストラーSFn 実行失敗回数","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -402,23 +414,23 @@ exports[`MonitoringStack snapshot 1`] = `
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","OrchestratorReplaceRouteFailed",{"label":"ReplaceRouteFailed","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":4,"height":4,"x":20,"y":4,"properties":{"view":"singleValue","title":"tier 2 接続先利用回数","region":"",
+              "","metrics":[["NfgFailover","OrchestratorReplaceRouteFailed","CoreNetwork","core-network-0000",{"label":"ReplaceRouteFailed","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":4,"height":4,"x":20,"y":4,"properties":{"view":"singleValue","title":"tier 2 接続先利用回数","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"tier2","expression":"SUM([m0,m1,m2,m3,m4,m5])","period":86400}],["NfgFailover","ProbeTier2Contact","AzLetter","a","ProbeRegion","us-east-1",{"label":"us-east-1/a","id":"m0","visible":false,"region":"us-east-1","period":86400,"stat":"Sum"}],["NfgFailover","ProbeTier2Contact","AzLetter","b","ProbeRegion","us-east-1",{"label":"us-east-1/b","id":"m1","visible":false,"region":"us-east-1","period":86400,"stat":"Sum"}],["NfgFailover","ProbeTier2Contact","AzLetter","a","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/a","id":"m2","visible":false,"region":"ap-northeast-1","period":86400,"stat":"Sum"}],["NfgFailover","ProbeTier2Contact","AzLetter","b","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/b","id":"m3","visible":false,"region":"ap-northeast-1","period":86400,"stat":"Sum"}],["NfgFailover","ProbeTier2Contact","AzLetter","a","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/a","id":"m4","visible":false,"region":"ap-northeast-3","period":86400,"stat":"Sum"}],["NfgFailover","ProbeTier2Contact","AzLetter","b","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/b","id":"m5","visible":false,"region":"ap-northeast-3","period":86400,"stat":"Sum"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":12,"height":6,"x":0,"y":8,"properties":{"view":"timeSeries","title":"unhealthy probe (リージョン x AZ。1 本 = 片AZ、2 本 = 両AZ)","region":"",
+              "","metrics":[[{"label":"tier2","expression":"SUM([m0,m1,m2])","period":86400}],[{"label":"us-east-1","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeTier2Contact\\" EdgeLocation=\\"us-east-1\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 86400)","region":"us-east-1","period":86400,"visible":false,"id":"m0"}],[{"label":"ap-northeast-1","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeTier2Contact\\" EdgeLocation=\\"ap-northeast-1\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 86400)","region":"ap-northeast-1","period":86400,"visible":false,"id":"m1"}],[{"label":"ap-northeast-3","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeTier2Contact\\" EdgeLocation=\\"ap-northeast-3\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 86400)","region":"ap-northeast-3","period":86400,"visible":false,"id":"m2"}]],"setPeriodToTimeRange":true}},{"type":"metric","width":12,"height":6,"x":0,"y":8,"properties":{"view":"timeSeries","title":"unhealthy probe (AZ別)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","ProbeUnhealthy","AzLetter","a","ProbeRegion","us-east-1",{"label":"us-east-1/a","region":"us-east-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeUnhealthy","AzLetter","b","ProbeRegion","us-east-1",{"label":"us-east-1/b","region":"us-east-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeUnhealthy","AzLetter","a","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/a","region":"ap-northeast-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeUnhealthy","AzLetter","b","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/b","region":"ap-northeast-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeUnhealthy","AzLetter","a","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/a","region":"ap-northeast-3","period":180,"stat":"Sum"}],["NfgFailover","ProbeUnhealthy","AzLetter","b","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/b","region":"ap-northeast-3","period":180,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":12,"y":8,"properties":{"view":"timeSeries","title":"probe Lambda Errors (リージョン別 SEARCH)","region":"",
+              "","metrics":[[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeUnhealthy\\" EdgeLocation=\\"us-east-1\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 180)","region":"us-east-1"}],[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeUnhealthy\\" EdgeLocation=\\"ap-northeast-1\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 180)","region":"ap-northeast-1"}],[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeUnhealthy\\" EdgeLocation=\\"ap-northeast-3\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 180)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":12,"y":8,"properties":{"view":"timeSeries","title":"probe Lambda Errors (AZ 別)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"us-east-1","expression":"SEARCH('{AWS/Lambda,FunctionName} MetricName=\\"Errors\\"', 'Sum', 300)","region":"us-east-1"}],[{"label":"ap-northeast-1","expression":"SEARCH('{AWS/Lambda,FunctionName} MetricName=\\"Errors\\"', 'Sum', 300)","region":"ap-northeast-1"}],[{"label":"ap-northeast-3","expression":"SEARCH('{AWS/Lambda,FunctionName} MetricName=\\"Errors\\"', 'Sum', 300)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":8,"height":6,"x":0,"y":14,"properties":{"view":"timeSeries","title":"オーケストレーターSFnの挙動 (状態通過カウント)","region":"",
+              "","metrics":[["AWS/Lambda","Errors","FunctionName","probe-us-east-1a",{"label":"us-east-1a","region":"us-east-1","stat":"Sum"}],["AWS/Lambda","Errors","FunctionName","probe-us-east-1b",{"label":"us-east-1b","region":"us-east-1","stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":8,"height":6,"x":0,"y":14,"properties":{"view":"timeSeries","title":"オーケストレーターSFnによる操作","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","OrchestratorPutPolicy",{"label":"PutPolicy (切替開始)","stat":"Sum"}],["NfgFailover","OrchestratorFailoverDone",{"label":"FailoverDone (切替完了)","stat":"Sum"}],["NfgFailover","OrchestratorSkipAlreadyApplied",{"label":"SkipAlreadyApplied (適用済み)","stat":"Sum"}],["NfgFailover","OrchestratorFailClose",{"label":"FailClose","stat":"Sum"}],["NfgFailover","OrchestratorReplaceRouteDone",{"label":"ReplaceRouteDone (片AZ切替)","stat":"Sum"}],["NfgFailover","OrchestratorReplaceRouteFailed",{"label":"ReplaceRouteFailed","stat":"Sum"}]],"yAxis":{}}},{"type":"log","width":8,"height":6,"x":8,"y":14,"properties":{"view":"table","title":"オーケストレーたーSFnの実行結果 (直近 20 件)","region":"",
+              "","metrics":[["NfgFailover","OrchestratorPutPolicy","CoreNetwork","core-network-0000",{"label":"PutPolicy (リージョンフェイルオーバー切替開始)","stat":"Sum"}],["NfgFailover","OrchestratorFailoverDone","CoreNetwork","core-network-0000",{"label":"FailoverDone (リージョンフェイルオーバー切替完了)","stat":"Sum"}],["NfgFailover","OrchestratorSkipAlreadyApplied","CoreNetwork","core-network-0000",{"label":"SkipAlreadyApplied (Core Network Policy適用済み)","stat":"Sum"}],["NfgFailover","OrchestratorFailClose","CoreNetwork","core-network-0000",{"label":"FailClose","stat":"Sum"}],["NfgFailover","OrchestratorReplaceRouteDone","CoreNetwork","core-network-0000",{"label":"ReplaceRouteDone (片AZ切替)","stat":"Sum"}],["NfgFailover","OrchestratorReplaceRouteFailed","CoreNetwork","core-network-0000",{"label":"ReplaceRouteFailed","stat":"Sum"}]],"yAxis":{}}},{"type":"log","width":8,"height":6,"x":8,"y":14,"properties":{"view":"table","title":"オーケストレーターSFnの実行結果 (直近 20 件)","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -458,31 +470,39 @@ exports[`MonitoringStack snapshot 1`] = `
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"TargetErrorCount","expression":"SEARCH('\\"TargetErrorCount\\"', 'Sum', 300)"}],[{"label":"InvocationDroppedCount","expression":"SEARCH('\\"InvocationDroppedCount\\"', 'Sum', 300)"}],[{"label":"InvocationThrottleCount","expression":"SEARCH('\\"InvocationThrottleCount\\"', 'Sum', 300)"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":26,"properties":{"view":"timeSeries","title":"end-to-end 疎通の成立 (3 分ごとに 1 が刻まれ続ければ正常、途切れている場合は = 失敗)","region":"",
+              "","metrics":[[{"label":"TargetErrorCount","expression":"SEARCH('{AWS/Scheduler,ScheduleGroup} MetricName=\\"TargetErrorCount\\" ScheduleGroup=\\"nfg-failover\\"', 'Sum', 300)"}],[{"label":"InvocationDroppedCount","expression":"SEARCH('{AWS/Scheduler,ScheduleGroup} MetricName=\\"InvocationDroppedCount\\" ScheduleGroup=\\"nfg-failover\\"', 'Sum', 300)"}],[{"label":"InvocationThrottleCount","expression":"SEARCH('{AWS/Scheduler,ScheduleGroup} MetricName=\\"InvocationThrottleCount\\" ScheduleGroup=\\"nfg-failover\\"', 'Sum', 300)"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":26,"properties":{"view":"timeSeries","title":"インターネットへの疎通結果 (3 分ごとに 1 が刻まれ続ければ正常、途切れている場合は失敗)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","ProbeHealthy","AzLetter","a","ProbeRegion","us-east-1",{"label":"us-east-1/a","region":"us-east-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeHealthy","AzLetter","b","ProbeRegion","us-east-1",{"label":"us-east-1/b","region":"us-east-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeHealthy","AzLetter","a","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/a","region":"ap-northeast-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeHealthy","AzLetter","b","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/b","region":"ap-northeast-1","period":180,"stat":"Sum"}],["NfgFailover","ProbeHealthy","AzLetter","a","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/a","region":"ap-northeast-3","period":180,"stat":"Sum"}],["NfgFailover","ProbeHealthy","AzLetter","b","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/b","region":"ap-northeast-3","period":180,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":12,"y":26,"properties":{"view":"timeSeries","title":"疎通レイテンシ (悪化している場合はリソースの不調もしくはフェイルオーバーによるレイテンシー増によるもの)","region":"",
+              "","metrics":[[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeHealthy\\" EdgeLocation=\\"us-east-1\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 180)","region":"us-east-1"}],[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeHealthy\\" EdgeLocation=\\"ap-northeast-1\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 180)","region":"ap-northeast-1"}],[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeHealthy\\" EdgeLocation=\\"ap-northeast-3\\" CoreNetwork=\\"core-network-0000\\"', 'Sum', 180)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":12,"y":26,"properties":{"view":"timeSeries","title":"疎通レイテンシ (悪化している場合はリソースの不調もしくはフェイルオーバーによるレイテンシー増によるもの)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["NfgFailover","ProbeLatencyMs","AzLetter","a","ProbeRegion","us-east-1",{"label":"us-east-1/a","region":"us-east-1","period":180}],["NfgFailover","ProbeLatencyMs","AzLetter","b","ProbeRegion","us-east-1",{"label":"us-east-1/b","region":"us-east-1","period":180}],["NfgFailover","ProbeLatencyMs","AzLetter","a","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/a","region":"ap-northeast-1","period":180}],["NfgFailover","ProbeLatencyMs","AzLetter","b","ProbeRegion","ap-northeast-1",{"label":"ap-northeast-1/b","region":"ap-northeast-1","period":180}],["NfgFailover","ProbeLatencyMs","AzLetter","a","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/a","region":"ap-northeast-3","period":180}],["NfgFailover","ProbeLatencyMs","AzLetter","b","ProbeRegion","ap-northeast-3",{"label":"ap-northeast-3/b","region":"ap-northeast-3","period":180}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":0,"y":32,"properties":{"view":"timeSeries","title":"NFW PassedPackets (リージョン別 SEARCH)","region":"",
+              "","metrics":[[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeLatencyMs\\" EdgeLocation=\\"us-east-1\\" CoreNetwork=\\"core-network-0000\\"', 'Average', 180)","region":"us-east-1"}],[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeLatencyMs\\" EdgeLocation=\\"ap-northeast-1\\" CoreNetwork=\\"core-network-0000\\"', 'Average', 180)","region":"ap-northeast-1"}],[{"label":"\${PROP('Dim.EdgeLocation')}/\${PROP('Dim.AvailabilityZone')}","expression":"SEARCH('{NfgFailover,EdgeLocation,AvailabilityZone,CoreNetwork} MetricName=\\"ProbeLatencyMs\\" EdgeLocation=\\"ap-northeast-3\\" CoreNetwork=\\"core-network-0000\\"', 'Average', 180)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":6,"height":10,"x":0,"y":32,"properties":{"view":"timeSeries","title":"NFW PassedPackets (リージョン別 SEARCH)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"us-east-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"PassedPackets\\"', 'Sum', 300)","region":"us-east-1"}],[{"label":"ap-northeast-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"PassedPackets\\"', 'Sum', 300)","region":"ap-northeast-1"}],[{"label":"ap-northeast-3","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"PassedPackets\\"', 'Sum', 300)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":32,"properties":{"view":"timeSeries","title":"NFW DroppedPackets (リージョン別 SEARCH)","region":"",
+              "","metrics":[[{"label":"us-east-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"PassedPackets\\" FirewallName=\\"UsEast1RegionStack-Nfw\\"', 'Sum', 300)","region":"us-east-1"}],[{"label":"ap-northeast-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"PassedPackets\\" FirewallName=\\"ApNortheast1RegionStack-Nfw\\"', 'Sum', 300)","region":"ap-northeast-1"}],[{"label":"ap-northeast-3","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"PassedPackets\\" FirewallName=\\"ApNortheast3RegionStack-Nfw\\"', 'Sum', 300)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":6,"height":10,"x":6,"y":32,"properties":{"view":"timeSeries","title":"NFW DroppedPackets (リージョン別 SEARCH)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"us-east-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"DroppedPackets\\"', 'Sum', 300)","region":"us-east-1"}],[{"label":"ap-northeast-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"DroppedPackets\\"', 'Sum', 300)","region":"ap-northeast-1"}],[{"label":"ap-northeast-3","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"DroppedPackets\\"', 'Sum', 300)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":32,"properties":{"view":"timeSeries","title":"NAT GW ErrorPortAllocation / BytesOut (SEARCH)","region":"",
+              "","metrics":[[{"label":"us-east-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"DroppedPackets\\" FirewallName=\\"UsEast1RegionStack-Nfw\\"', 'Sum', 300)","region":"us-east-1"}],[{"label":"ap-northeast-1","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"DroppedPackets\\" FirewallName=\\"ApNortheast1RegionStack-Nfw\\"', 'Sum', 300)","region":"ap-northeast-1"}],[{"label":"ap-northeast-3","expression":"SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName=\\"DroppedPackets\\" FirewallName=\\"ApNortheast3RegionStack-Nfw\\"', 'Sum', 300)","region":"ap-northeast-3"}]],"yAxis":{}}},{"type":"metric","width":6,"height":10,"x":12,"y":32,"properties":{"view":"timeSeries","title":"NAT Gateway BytesOut (NAT ゲートウェイ別)","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[[{"label":"err us-east-1","expression":"SEARCH('{AWS/NATGateway,NatGatewayId} MetricName=\\"ErrorPortAllocation\\"', 'Sum', 300)","region":"us-east-1"}],[{"label":"err ap-northeast-1","expression":"SEARCH('{AWS/NATGateway,NatGatewayId} MetricName=\\"ErrorPortAllocation\\"', 'Sum', 300)","region":"ap-northeast-1"}],[{"label":"err ap-northeast-3","expression":"SEARCH('{AWS/NATGateway,NatGatewayId} MetricName=\\"ErrorPortAllocation\\"', 'Sum', 300)","region":"ap-northeast-3"}],[{"label":"bytes us-east-1","expression":"SEARCH('{AWS/NATGateway,NatGatewayId} MetricName=\\"BytesOutToDestination\\"', 'Sum', 300)","region":"us-east-1","yAxis":"right"}],[{"label":"bytes ap-northeast-1","expression":"SEARCH('{AWS/NATGateway,NatGatewayId} MetricName=\\"BytesOutToDestination\\"', 'Sum', 300)","region":"ap-northeast-1","yAxis":"right"}],[{"label":"bytes ap-northeast-3","expression":"SEARCH('{AWS/NATGateway,NatGatewayId} MetricName=\\"BytesOutToDestination\\"', 'Sum', 300)","region":"ap-northeast-3","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":32,"properties":{"view":"timeSeries","title":"CNE エッジ別 BytesIn / BytesOut","region":"",
+              "","metrics":[["AWS/NATGateway","BytesOutToDestination","NatGatewayId","nat-us-east-1a",{"label":"bytes us-east-1a","region":"us-east-1","stat":"Sum"}],["AWS/NATGateway","BytesOutToDestination","NatGatewayId","nat-us-east-1b",{"label":"bytes us-east-1b","region":"us-east-1","stat":"Sum"}],["AWS/NATGateway","BytesOutToDestination","NatGatewayId","nat-ap-northeast-1a",{"label":"bytes ap-northeast-1a","region":"ap-northeast-1","stat":"Sum"}],["AWS/NATGateway","BytesOutToDestination","NatGatewayId","nat-ap-northeast-1c",{"label":"bytes ap-northeast-1c","region":"ap-northeast-1","stat":"Sum"}],["AWS/NATGateway","BytesOutToDestination","NatGatewayId","nat-ap-northeast-3a",{"label":"bytes ap-northeast-3a","region":"ap-northeast-3","stat":"Sum"}],["AWS/NATGateway","BytesOutToDestination","NatGatewayId","nat-ap-northeast-3b",{"label":"bytes ap-northeast-3b","region":"ap-northeast-3","stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":10,"x":18,"y":32,"properties":{"view":"timeSeries","title":"CNE エッジ別 BytesIn / BytesOut","region":"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","us-east-1",{"label":"in us-east-1","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","us-west-2",{"label":"in us-west-2","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-1",{"label":"in ap-northeast-1","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-3",{"label":"in ap-northeast-3","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","ap-southeast-1",{"label":"in ap-southeast-1","stat":"Sum"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","us-east-1",{"label":"out us-east-1","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","us-west-2",{"label":"out us-west-2","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-1",{"label":"out ap-northeast-1","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-3",{"label":"out ap-northeast-3","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","ap-southeast-1",{"label":"out ap-southeast-1","stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"log","width":24,"height":6,"x":0,"y":38,"properties":{"view":"table","title":"Cloud WAN イベントログ (networkmanagerloggroup)","region":"",
+              "","metrics":[["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","us-east-1",{"label":"in us-east-1","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","us-west-2",{"label":"in us-west-2","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-1",{"label":"in ap-northeast-1","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-3",{"label":"in ap-northeast-3","stat":"Sum"}],["AWS/Network Manager","BytesIn","CoreNetwork","core-network-0000","EdgeLocation","ap-southeast-1",{"label":"in ap-southeast-1","stat":"Sum"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","us-east-1",{"label":"out us-east-1","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","us-west-2",{"label":"out us-west-2","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-1",{"label":"out ap-northeast-1","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","ap-northeast-3",{"label":"out ap-northeast-3","stat":"Sum","yAxis":"right"}],["AWS/Network Manager","BytesOut","CoreNetwork","core-network-0000","EdgeLocation","ap-southeast-1",{"label":"out ap-southeast-1","stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":12,"height":10,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NAT Gateway 同時接続数 / 接続確立数 (NAT ゲートウェイ別)","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/NATGateway","ActiveConnectionCount","NatGatewayId","nat-us-east-1a",{"label":"active us-east-1a","region":"us-east-1","stat":"Maximum"}],["AWS/NATGateway","ActiveConnectionCount","NatGatewayId","nat-us-east-1b",{"label":"active us-east-1b","region":"us-east-1","stat":"Maximum"}],["AWS/NATGateway","ActiveConnectionCount","NatGatewayId","nat-ap-northeast-1a",{"label":"active ap-northeast-1a","region":"ap-northeast-1","stat":"Maximum"}],["AWS/NATGateway","ActiveConnectionCount","NatGatewayId","nat-ap-northeast-1c",{"label":"active ap-northeast-1c","region":"ap-northeast-1","stat":"Maximum"}],["AWS/NATGateway","ActiveConnectionCount","NatGatewayId","nat-ap-northeast-3a",{"label":"active ap-northeast-3a","region":"ap-northeast-3","stat":"Maximum"}],["AWS/NATGateway","ActiveConnectionCount","NatGatewayId","nat-ap-northeast-3b",{"label":"active ap-northeast-3b","region":"ap-northeast-3","stat":"Maximum"}],["AWS/NATGateway","ConnectionEstablishedCount","NatGatewayId","nat-us-east-1a",{"label":"established us-east-1a","region":"us-east-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","ConnectionEstablishedCount","NatGatewayId","nat-us-east-1b",{"label":"established us-east-1b","region":"us-east-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","ConnectionEstablishedCount","NatGatewayId","nat-ap-northeast-1a",{"label":"established ap-northeast-1a","region":"ap-northeast-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","ConnectionEstablishedCount","NatGatewayId","nat-ap-northeast-1c",{"label":"established ap-northeast-1c","region":"ap-northeast-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","ConnectionEstablishedCount","NatGatewayId","nat-ap-northeast-3a",{"label":"established ap-northeast-3a","region":"ap-northeast-3","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","ConnectionEstablishedCount","NatGatewayId","nat-ap-northeast-3b",{"label":"established ap-northeast-3b","region":"ap-northeast-3","stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":12,"height":10,"x":12,"y":42,"properties":{"view":"timeSeries","title":"NAT Gateway エラー ErrorPortAllocation / PacketsDropCount (NAT ゲートウェイ別)","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/NATGateway","ErrorPortAllocation","NatGatewayId","nat-us-east-1a",{"label":"err us-east-1a","region":"us-east-1","stat":"Sum"}],["AWS/NATGateway","ErrorPortAllocation","NatGatewayId","nat-us-east-1b",{"label":"err us-east-1b","region":"us-east-1","stat":"Sum"}],["AWS/NATGateway","ErrorPortAllocation","NatGatewayId","nat-ap-northeast-1a",{"label":"err ap-northeast-1a","region":"ap-northeast-1","stat":"Sum"}],["AWS/NATGateway","ErrorPortAllocation","NatGatewayId","nat-ap-northeast-1c",{"label":"err ap-northeast-1c","region":"ap-northeast-1","stat":"Sum"}],["AWS/NATGateway","ErrorPortAllocation","NatGatewayId","nat-ap-northeast-3a",{"label":"err ap-northeast-3a","region":"ap-northeast-3","stat":"Sum"}],["AWS/NATGateway","ErrorPortAllocation","NatGatewayId","nat-ap-northeast-3b",{"label":"err ap-northeast-3b","region":"ap-northeast-3","stat":"Sum"}],["AWS/NATGateway","PacketsDropCount","NatGatewayId","nat-us-east-1a",{"label":"drop us-east-1a","region":"us-east-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","PacketsDropCount","NatGatewayId","nat-us-east-1b",{"label":"drop us-east-1b","region":"us-east-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","PacketsDropCount","NatGatewayId","nat-ap-northeast-1a",{"label":"drop ap-northeast-1a","region":"ap-northeast-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","PacketsDropCount","NatGatewayId","nat-ap-northeast-1c",{"label":"drop ap-northeast-1c","region":"ap-northeast-1","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","PacketsDropCount","NatGatewayId","nat-ap-northeast-3a",{"label":"drop ap-northeast-3a","region":"ap-northeast-3","stat":"Sum","yAxis":"right"}],["AWS/NATGateway","PacketsDropCount","NatGatewayId","nat-ap-northeast-3b",{"label":"drop ap-northeast-3b","region":"ap-northeast-3","stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"log","width":24,"height":6,"x":0,"y":52,"properties":{"view":"table","title":"Cloud WAN イベントログ (networkmanagerloggroup)","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -505,6 +525,12 @@ exports[`MonitoringStack snapshot 1`] = `
             "Label": "ProbeInvokeError",
             "MetricStat": {
               "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "CoreNetwork",
+                    "Value": "core-network-0000",
+                  },
+                ],
                 "MetricName": "OrchestratorProbeInvokeError",
                 "Namespace": "NfgFailover",
               },
@@ -530,6 +556,12 @@ exports[`MonitoringStack snapshot 1`] = `
             "Label": "PutPolicy",
             "MetricStat": {
               "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "CoreNetwork",
+                    "Value": "core-network-0000",
+                  },
+                ],
                 "MetricName": "OrchestratorPutPolicy",
                 "Namespace": "NfgFailover",
               },
@@ -555,6 +587,12 @@ exports[`MonitoringStack snapshot 1`] = `
             "Label": "ReplaceRouteFailed",
             "MetricStat": {
               "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "CoreNetwork",
+                    "Value": "core-network-0000",
+                  },
+                ],
                 "MetricName": "OrchestratorReplaceRouteFailed",
                 "Namespace": "NfgFailover",
               },
@@ -633,13 +671,23 @@ exports[`OrchestratorStack snapshot 1`] = `
   },
   "Resources": {
     "ConfirmationCanceledMetric09F75AB9": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "PassStateEntered" && $.details.name = "ConfirmationCanceled" }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorConfirmationCanceled",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -710,32 +758,32 @@ exports[`OrchestratorStack snapshot 1`] = `
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:probe-a",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:probe-us-east-1a",
             },
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:probe-b",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:probe-us-east-1b",
             },
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:aws:lambda:ap-northeast-1:123456789012:function:probe-a",
+              "Resource": "arn:aws:lambda:ap-northeast-1:123456789012:function:probe-ap-northeast-1a",
             },
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:aws:lambda:ap-northeast-1:123456789012:function:probe-b",
+              "Resource": "arn:aws:lambda:ap-northeast-1:123456789012:function:probe-ap-northeast-1c",
             },
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:aws:lambda:ap-northeast-3:123456789012:function:probe-a",
+              "Resource": "arn:aws:lambda:ap-northeast-3:123456789012:function:probe-ap-northeast-3a",
             },
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": "arn:aws:lambda:ap-northeast-3:123456789012:function:probe-b",
+              "Resource": "arn:aws:lambda:ap-northeast-3:123456789012:function:probe-ap-northeast-3b",
             },
             {
               "Action": "ec2:DescribeRouteTables",
@@ -760,13 +808,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::IAM::Policy",
     },
     "FailCloseMetricACA362A6": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "PassStateEntered" && ($.details.name = "FailClose" || $.details.name = "FailCloseEffective") }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorFailClose",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -776,13 +834,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::Logs::MetricFilter",
     },
     "FailoverDoneMetric60784092": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "SucceedStateEntered" && $.details.name = "FailoverDone" }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorFailoverDone",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -797,7 +865,8 @@ exports[`OrchestratorStack snapshot 1`] = `
         "FlexibleTimeWindow": {
           "Mode": "OFF",
         },
-        "Name": "nfg-failover-health-check",
+        "GroupName": "nfg-failover",
+        "Name": "nfg-failover-orchestrator",
         "ScheduleExpression": "rate(3 minutes)",
         "ScheduleExpressionTimezone": "Etc/UTC",
         "State": "DISABLED",
@@ -819,6 +888,14 @@ exports[`OrchestratorStack snapshot 1`] = `
       },
       "Type": "AWS::Scheduler::Schedule",
     },
+    "FailoverScheduleGroup7A8C701D": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "Name": "nfg-failover",
+      },
+      "Type": "AWS::Scheduler::ScheduleGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
     "Orchestrator6EF1216F": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -830,147 +907,147 @@ exports[`OrchestratorStack snapshot 1`] = `
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"HealthCheckAll","States":{"HealthCheckAll":{"Type":"Parallel","Next":"Aggregate","Output":"{% $states.result %}","Branches":[{"StartAt":"HealthCheck-us-east-1-a","States":{"HealthCheck-us-east-1-a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-us-east-1-a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-a"}},"Output":{"region":"us-east-1","azLetter":"a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              "{"StartAt":"HealthCheckAll","States":{"HealthCheckAll":{"Type":"Parallel","Next":"Aggregate","Output":"{% $states.result %}","Branches":[{"StartAt":"HealthCheck-us-east-1a","States":{"HealthCheck-us-east-1a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-us-east-1a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-us-east-1a"}},"Output":{"region":"us-east-1","azName":"us-east-1a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckFail-us-east-1-a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azLetter":"a","healthy":false},"End":true}}},{"StartAt":"HealthCheck-us-east-1-b","States":{"HealthCheck-us-east-1-b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-us-east-1-b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-b"}},"Output":{"region":"us-east-1","azLetter":"b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckFail-us-east-1a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azName":"us-east-1a","healthy":false},"End":true}}},{"StartAt":"HealthCheck-us-east-1b","States":{"HealthCheck-us-east-1b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-us-east-1b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-us-east-1b"}},"Output":{"region":"us-east-1","azName":"us-east-1b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckFail-us-east-1-b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azLetter":"b","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-1-a","States":{"HealthCheck-ap-northeast-1-a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-1-a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-a"}},"Output":{"region":"ap-northeast-1","azLetter":"a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckFail-us-east-1b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azName":"us-east-1b","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-1a","States":{"HealthCheck-ap-northeast-1a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-1a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-ap-northeast-1a"}},"Output":{"region":"ap-northeast-1","azName":"ap-northeast-1a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckFail-ap-northeast-1-a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azLetter":"a","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-1-b","States":{"HealthCheck-ap-northeast-1-b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-1-b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-b"}},"Output":{"region":"ap-northeast-1","azLetter":"b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckFail-ap-northeast-1a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azName":"ap-northeast-1a","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-1c","States":{"HealthCheck-ap-northeast-1c":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-1c"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-ap-northeast-1c"}},"Output":{"region":"ap-northeast-1","azName":"ap-northeast-1c","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckFail-ap-northeast-1-b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azLetter":"b","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-3-a","States":{"HealthCheck-ap-northeast-3-a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-3-a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-a"}},"Output":{"region":"ap-northeast-3","azLetter":"a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckFail-ap-northeast-1c":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azName":"ap-northeast-1c","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-3a","States":{"HealthCheck-ap-northeast-3a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-3a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-ap-northeast-3a"}},"Output":{"region":"ap-northeast-3","azName":"ap-northeast-3a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckFail-ap-northeast-3-a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azLetter":"a","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-3-b","States":{"HealthCheck-ap-northeast-3-b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-3-b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-b"}},"Output":{"region":"ap-northeast-3","azLetter":"b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckFail-ap-northeast-3a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azName":"ap-northeast-3a","healthy":false},"End":true}}},{"StartAt":"HealthCheck-ap-northeast-3b","States":{"HealthCheck-ap-northeast-3b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckFail-ap-northeast-3b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-ap-northeast-3b"}},"Output":{"region":"ap-northeast-3","azName":"ap-northeast-3b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckFail-ap-northeast-3-b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azLetter":"b","healthy":false},"End":true}}}]},"Aggregate":{"Type":"Pass","Next":"NeedConfirm","Assign":{"probe1":"{% $states.input %}","agg":"{% (\\n  $results := $states.input;\\n  $regions := $distinct($results.region);\\n  $priority := {\\"us-east-1\\":1,\\"ap-northeast-1\\":7,\\"ap-northeast-3\\":9};\\n  $perRegion := $regions.(\\n    $r := $;\\n    {\\n      \\"region\\": $r,\\n      \\"down\\": [$results[region = $r and healthy = false].azLetter],\\n      \\"up\\": [$results[region = $r and healthy = true].azLetter]\\n    }\\n  );\\n  $avoid := [$perRegion[$count(up) = 0].region];\\n  $replace := [$perRegion[$count(down) > 0 and $count(up) > 0].{\\n    \\"region\\": region, \\"failedAzs\\": down, \\"survivorAz\\": up[0]\\n  }];\\n  $candidates := $keys($priority)[$not($ in $avoid)];\\n  $target := $count($candidates) > 0\\n    ? ($candidates^($lookup($priority, $)))[0]\\n    : null;\\n  {\\n    \\"avoidRegions\\": $avoid,\\n    \\"replaceTargets\\": $replace,\\n    \\"failoverTarget\\": $target,\\n    \\"failClose\\": $count($candidates) = 0\\n  }\\n) %}"}},"NeedConfirm":{"Type":"Choice","Choices":[{"Condition":"{% $count($agg.avoidRegions) = 0 and $count($agg.replaceTargets) = 0 %}","Next":"FailoverActions"}],"Default":"WaitConfirm"},"WaitConfirm":{"Type":"Wait","Seconds":90,"Next":"HealthCheckConfirmAll"},"HealthCheckConfirmAll":{"Type":"Parallel","Next":"AggregateConfirm","Output":"{% $states.result %}","Branches":[{"StartAt":"HealthCheckConfirm-us-east-1-a","States":{"HealthCheckConfirm-us-east-1-a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-us-east-1-a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-a"}},"Output":{"region":"us-east-1","azLetter":"a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckFail-ap-northeast-3b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azName":"ap-northeast-3b","healthy":false},"End":true}}}]},"Aggregate":{"Type":"Pass","Next":"NeedConfirm","Assign":{"probe1":"{% $states.input %}","agg":"{% (\\n  $results := $states.input;\\n  $regions := $distinct($results.region);\\n  $priority := {\\"us-east-1\\":1,\\"ap-northeast-1\\":7,\\"ap-northeast-3\\":9};\\n  $perRegion := $regions.(\\n    $r := $;\\n    {\\n      \\"region\\": $r,\\n      \\"down\\": [$results[region = $r and healthy = false].azName],\\n      \\"up\\": [$results[region = $r and healthy = true].azName]\\n    }\\n  );\\n  $avoid := [$perRegion[$count(up) = 0].region];\\n  $replace := [$perRegion[$count(down) > 0 and $count(up) > 0].{\\n    \\"region\\": region, \\"failedAzs\\": down, \\"survivorAz\\": up[0]\\n  }];\\n  $candidates := $keys($priority)[$not($ in $avoid)];\\n  $target := $count($candidates) > 0\\n    ? ($candidates^($lookup($priority, $)))[0]\\n    : null;\\n  {\\n    \\"avoidRegions\\": $avoid,\\n    \\"replaceTargets\\": $replace,\\n    \\"failoverTarget\\": $target,\\n    \\"failClose\\": $count($candidates) = 0\\n  }\\n) %}"}},"NeedConfirm":{"Type":"Choice","Choices":[{"Condition":"{% $count($agg.avoidRegions) = 0 and $count($agg.replaceTargets) = 0 %}","Next":"FailoverActions"}],"Default":"WaitConfirm"},"WaitConfirm":{"Type":"Wait","Seconds":90,"Next":"HealthCheckConfirmAll"},"HealthCheckConfirmAll":{"Type":"Parallel","Next":"AggregateConfirm","Output":"{% $states.result %}","Branches":[{"StartAt":"HealthCheckConfirm-us-east-1a","States":{"HealthCheckConfirm-us-east-1a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-us-east-1a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-us-east-1a"}},"Output":{"region":"us-east-1","azName":"us-east-1a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckConfirmFail-us-east-1-a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azLetter":"a","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-us-east-1-b","States":{"HealthCheckConfirm-us-east-1-b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-us-east-1-b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-b"}},"Output":{"region":"us-east-1","azLetter":"b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckConfirmFail-us-east-1a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azName":"us-east-1a","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-us-east-1b","States":{"HealthCheckConfirm-us-east-1b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-us-east-1b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"us-east-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:us-east-1:123456789012:function:probe-us-east-1b"}},"Output":{"region":"us-east-1","azName":"us-east-1b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckConfirmFail-us-east-1-b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azLetter":"b","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-1-a","States":{"HealthCheckConfirm-ap-northeast-1-a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-1-a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-a"}},"Output":{"region":"ap-northeast-1","azLetter":"a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckConfirmFail-us-east-1b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","azName":"us-east-1b","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-1a","States":{"HealthCheckConfirm-ap-northeast-1a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-1a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-ap-northeast-1a"}},"Output":{"region":"ap-northeast-1","azName":"ap-northeast-1a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckConfirmFail-ap-northeast-1-a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azLetter":"a","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-1-b","States":{"HealthCheckConfirm-ap-northeast-1-b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-1-b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-b"}},"Output":{"region":"ap-northeast-1","azLetter":"b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckConfirmFail-ap-northeast-1a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azName":"ap-northeast-1a","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-1c","States":{"HealthCheckConfirm-ap-northeast-1c":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-1c"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-1","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-1:123456789012:function:probe-ap-northeast-1c"}},"Output":{"region":"ap-northeast-1","azName":"ap-northeast-1c","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckConfirmFail-ap-northeast-1-b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azLetter":"b","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-3-a","States":{"HealthCheckConfirm-ap-northeast-3-a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-3-a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-a"}},"Output":{"region":"ap-northeast-3","azLetter":"a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckConfirmFail-ap-northeast-1c":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","azName":"ap-northeast-1c","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-3a","States":{"HealthCheckConfirm-ap-northeast-3a":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-3a"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-ap-northeast-3a"}},"Output":{"region":"ap-northeast-3","azName":"ap-northeast-3a","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckConfirmFail-ap-northeast-3-a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azLetter":"a","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-3-b","States":{"HealthCheckConfirm-ap-northeast-3-b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-3-b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-b"}},"Output":{"region":"ap-northeast-3","azLetter":"b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
+              ""},"HealthCheckConfirmFail-ap-northeast-3a":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azName":"ap-northeast-3a","healthy":false},"End":true}}},{"StartAt":"HealthCheckConfirm-ap-northeast-3b","States":{"HealthCheckConfirm-ap-northeast-3b":{"QueryLanguage":"JSONata","End":true,"Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"HealthCheckConfirmFail-ap-northeast-3b"}],"Type":"Task","TimeoutSeconds":30,"Arguments":{"region":"ap-northeast-3","action":"invoke","service":"lambda","parameters":{"FunctionName":"arn:aws:lambda:ap-northeast-3:123456789012:function:probe-ap-northeast-3b"}},"Output":{"region":"ap-northeast-3","azName":"ap-northeast-3b","healthy":"{% ($p := $states.result.Payload; $body := $type($p) = 'string' ? $parse($p) : $p; $exists($states.result.FunctionError) ? false : $body.healthy = true) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"HealthCheckConfirmFail-ap-northeast-3-b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azLetter":"b","healthy":false},"End":true}}}]},"AggregateConfirm":{"Type":"Pass","Next":"ConfirmOutcome","Assign":{"agg":"{% (\\n  $results := [$probe1.(\\n  $p := $;\\n  $m := $states.input[region = $p.region and azLetter = $p.azLetter][0];\\n  { \\"region\\": $p.region, \\"azLetter\\": $p.azLetter, \\"healthy\\": $p.healthy or $m.healthy = true }\\n)];\\n  $regions := $distinct($results.region);\\n  $priority := {\\"us-east-1\\":1,\\"ap-northeast-1\\":7,\\"ap-northeast-3\\":9};\\n  $perRegion := $regions.(\\n    $r := $;\\n    {\\n      \\"region\\": $r,\\n      \\"down\\": [$results[region = $r and healthy = false].azLetter],\\n      \\"up\\": [$results[region = $r and healthy = true].azLetter]\\n    }\\n  );\\n  $avoid := [$perRegion[$count(up) = 0].region];\\n  $replace := [$perRegion[$count(down) > 0 and $count(up) > 0].{\\n    \\"region\\": region, \\"failedAzs\\": down, \\"survivorAz\\": up[0]\\n  }];\\n  $candidates := $keys($priority)[$not($ in $avoid)];\\n  $target := $count($candidates) > 0\\n    ? ($candidates^($lookup($priority, $)))[0]\\n    : null;\\n  {\\n    \\"avoidRegions\\": $avoid,\\n    \\"replaceTargets\\": $replace,\\n    \\"failoverTarget\\": $target,\\n    \\"failClose\\": $count($candidates) = 0\\n  }\\n) %}"}},"ConfirmOutcome":{"Type":"Choice","Choices":[{"Condition":"{% $count($agg.avoidRegions) = 0 and $count($agg.replaceTargets) = 0 %}","Next":"ConfirmationCanceled"}],"Default":"FailoverActions"},"FailoverActions":{"Type":"Parallel","End":true,"Output":"{% $states.result %}","Branches":[{"StartAt":"ReplaceRouteParallel","States":{"ReplaceRouteParallel":{"Type":"Parallel","QueryLanguage":"JSONata","End":true,"Output":"{% $states.result %}","Branches":[{"StartAt":"NeedReplace-us-east-1","States":{"NeedReplace-us-east-1":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% $count($agg.replaceTargets[region = \\"us-east-1\\"]) > 0 %}","Next":"DescribeRt-us-east-1"}],"Default":"SkipReplace-us-east-1"},"SkipReplace-us-east-1":{"Type":"Pass","QueryLanguage":"JSONata","End":true},"DescribeRt-us-east-1":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-us-east-1-a","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-us-east-1"}],"Type":"Task","Arguments":{"region":"us-east-1","action":"describeRouteTables","service":"ec2","parameters":{"Filters":[{"Name":"tag:failover-role","Values":["inspection-cwan-rt"]},{"Name":"tag:failover-region","Values":["us-east-1"]}]}},"Assign":{"rtIdA":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"a\\"][0].RouteTableId) %}","rtIdB":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"b\\"][0].RouteTableId) %}","survivorEndpoint":"{% ($t := $agg.replaceTargets[region = \\"us-east-1\\"][0]; $rts := $states.result.RouteTables; $srt := $rts[Tags[Key = \\"failover-az\\"].Value = $t.survivorAz][0]; $srt.Tags[Key = \\"failover-endpoint\\"][0].Value) %}"},"Resource":"",
+              ""},"HealthCheckConfirmFail-ap-northeast-3b":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","azName":"ap-northeast-3b","healthy":false},"End":true}}}]},"AggregateConfirm":{"Type":"Pass","Next":"ConfirmOutcome","Assign":{"agg":"{% (\\n  $results := [$probe1.(\\n  $p := $;\\n  $m := $states.input[region = $p.region and azName = $p.azName][0];\\n  { \\"region\\": $p.region, \\"azName\\": $p.azName, \\"healthy\\": $p.healthy or $m.healthy = true }\\n)];\\n  $regions := $distinct($results.region);\\n  $priority := {\\"us-east-1\\":1,\\"ap-northeast-1\\":7,\\"ap-northeast-3\\":9};\\n  $perRegion := $regions.(\\n    $r := $;\\n    {\\n      \\"region\\": $r,\\n      \\"down\\": [$results[region = $r and healthy = false].azName],\\n      \\"up\\": [$results[region = $r and healthy = true].azName]\\n    }\\n  );\\n  $avoid := [$perRegion[$count(up) = 0].region];\\n  $replace := [$perRegion[$count(down) > 0 and $count(up) > 0].{\\n    \\"region\\": region, \\"failedAzs\\": down, \\"survivorAz\\": up[0]\\n  }];\\n  $candidates := $keys($priority)[$not($ in $avoid)];\\n  $target := $count($candidates) > 0\\n    ? ($candidates^($lookup($priority, $)))[0]\\n    : null;\\n  {\\n    \\"avoidRegions\\": $avoid,\\n    \\"replaceTargets\\": $replace,\\n    \\"failoverTarget\\": $target,\\n    \\"failClose\\": $count($candidates) = 0\\n  }\\n) %}"}},"ConfirmOutcome":{"Type":"Choice","Choices":[{"Condition":"{% $count($agg.avoidRegions) = 0 and $count($agg.replaceTargets) = 0 %}","Next":"ConfirmationCanceled"}],"Default":"FailoverActions"},"FailoverActions":{"Type":"Parallel","End":true,"Output":"{% $states.result %}","Branches":[{"StartAt":"ReplaceRouteParallel","States":{"ReplaceRouteParallel":{"Type":"Parallel","QueryLanguage":"JSONata","End":true,"Output":"{% $states.result %}","Branches":[{"StartAt":"NeedReplace-us-east-1","States":{"NeedReplace-us-east-1":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% $count($agg.replaceTargets[region = \\"us-east-1\\"]) > 0 %}","Next":"DescribeRt-us-east-1"}],"Default":"SkipReplace-us-east-1"},"SkipReplace-us-east-1":{"Type":"Pass","QueryLanguage":"JSONata","End":true},"DescribeRt-us-east-1":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-us-east-1a","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-us-east-1"}],"Type":"Task","Arguments":{"region":"us-east-1","action":"describeRouteTables","service":"ec2","parameters":{"Filters":[{"Name":"tag:failover-role","Values":["inspection-cwan-rt"]},{"Name":"tag:failover-region","Values":["us-east-1"]}]}},"Assign":{"rtIdA":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"us-east-1a\\"][0].RouteTableId) %}","rtIdB":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"us-east-1b\\"][0].RouteTableId) %}","survivorEndpoint":"{% ($t := $agg.replaceTargets[region = \\"us-east-1\\"][0]; $rts := $states.result.RouteTables; $srt := $rts[Tags[Key = \\"failover-az\\"].Value = $t.survivorAz][0]; $srt.Tags[Key = \\"failover-endpoint\\"][0].Value) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"NeedReplaceAz-us-east-1-a":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"a\\" in $agg.replaceTargets[region = \\"us-east-1\\"][0].failedAzs %}","Next":"ReplaceRt-us-east-1-a"}],"Default":"NeedReplaceAz-us-east-1-b"},"NeedReplaceAz-us-east-1-b":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"b\\" in $agg.replaceTargets[region = \\"us-east-1\\"][0].failedAzs %}","Next":"ReplaceRt-us-east-1-b"}],"Default":"ReplaceRouteDone-us-east-1"},"ReplaceRt-us-east-1-a":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-us-east-1-b","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-us-east-1"}],"Type":"Task","Arguments":{"region":"us-east-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdA %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"us-east-1","az":"a","replaced":true},"Resource":"",
+              ""},"NeedReplaceAz-us-east-1a":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"us-east-1a\\" in $agg.replaceTargets[region = \\"us-east-1\\"][0].failedAzs %}","Next":"ReplaceRt-us-east-1a"}],"Default":"NeedReplaceAz-us-east-1b"},"NeedReplaceAz-us-east-1b":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"us-east-1b\\" in $agg.replaceTargets[region = \\"us-east-1\\"][0].failedAzs %}","Next":"ReplaceRt-us-east-1b"}],"Default":"ReplaceRouteDone-us-east-1"},"ReplaceRt-us-east-1a":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-us-east-1b","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-us-east-1"}],"Type":"Task","Arguments":{"region":"us-east-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdA %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"us-east-1","azName":"us-east-1a","replaced":true},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"ReplaceRouteFailed-us-east-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","replaced":false},"End":true},"ReplaceRt-us-east-1-b":{"QueryLanguage":"JSONata","Next":"ReplaceRouteDone-us-east-1","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-us-east-1"}],"Type":"Task","Arguments":{"region":"us-east-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdB %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"us-east-1","az":"b","replaced":true},"Resource":"",
+              ""},"ReplaceRouteFailed-us-east-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","replaced":false},"End":true},"ReplaceRt-us-east-1b":{"QueryLanguage":"JSONata","Next":"ReplaceRouteDone-us-east-1","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-us-east-1"}],"Type":"Task","Arguments":{"region":"us-east-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdB %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"us-east-1","azName":"us-east-1b","replaced":true},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"ReplaceRouteDone-us-east-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","replaced":true},"End":true}}},{"StartAt":"NeedReplace-ap-northeast-1","States":{"NeedReplace-ap-northeast-1":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% $count($agg.replaceTargets[region = \\"ap-northeast-1\\"]) > 0 %}","Next":"DescribeRt-ap-northeast-1"}],"Default":"SkipReplace-ap-northeast-1"},"SkipReplace-ap-northeast-1":{"Type":"Pass","QueryLanguage":"JSONata","End":true},"DescribeRt-ap-northeast-1":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-1-a","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-1"}],"Type":"Task","Arguments":{"region":"ap-northeast-1","action":"describeRouteTables","service":"ec2","parameters":{"Filters":[{"Name":"tag:failover-role","Values":["inspection-cwan-rt"]},{"Name":"tag:failover-region","Values":["ap-northeast-1"]}]}},"Assign":{"rtIdA":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"a\\"][0].RouteTableId) %}","rtIdB":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"b\\"][0].RouteTableId) %}","survivorEndpoint":"{% ($t := $agg.replaceTargets[region = \\"ap-northeast-1\\"][0]; $rts := $states.result.RouteTables; $srt := $rts[Tags[Key = \\"failover-az\\"].Value = $t.survivorAz][0]; $srt.Tags[Key = \\"failover-endpoint\\"][0].Value) %}"},"Resource":"",
+              ""},"ReplaceRouteDone-us-east-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"us-east-1","replaced":true},"End":true}}},{"StartAt":"NeedReplace-ap-northeast-1","States":{"NeedReplace-ap-northeast-1":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% $count($agg.replaceTargets[region = \\"ap-northeast-1\\"]) > 0 %}","Next":"DescribeRt-ap-northeast-1"}],"Default":"SkipReplace-ap-northeast-1"},"SkipReplace-ap-northeast-1":{"Type":"Pass","QueryLanguage":"JSONata","End":true},"DescribeRt-ap-northeast-1":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-1a","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-1"}],"Type":"Task","Arguments":{"region":"ap-northeast-1","action":"describeRouteTables","service":"ec2","parameters":{"Filters":[{"Name":"tag:failover-role","Values":["inspection-cwan-rt"]},{"Name":"tag:failover-region","Values":["ap-northeast-1"]}]}},"Assign":{"rtIdA":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"ap-northeast-1a\\"][0].RouteTableId) %}","rtIdC":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"ap-northeast-1c\\"][0].RouteTableId) %}","survivorEndpoint":"{% ($t := $agg.replaceTargets[region = \\"ap-northeast-1\\"][0]; $rts := $states.result.RouteTables; $srt := $rts[Tags[Key = \\"failover-az\\"].Value = $t.survivorAz][0]; $srt.Tags[Key = \\"failover-endpoint\\"][0].Value) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"NeedReplaceAz-ap-northeast-1-a":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"a\\" in $agg.replaceTargets[region = \\"ap-northeast-1\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-1-a"}],"Default":"NeedReplaceAz-ap-northeast-1-b"},"NeedReplaceAz-ap-northeast-1-b":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"b\\" in $agg.replaceTargets[region = \\"ap-northeast-1\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-1-b"}],"Default":"ReplaceRouteDone-ap-northeast-1"},"ReplaceRt-ap-northeast-1-a":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-1-b","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-1"}],"Type":"Task","Arguments":{"region":"ap-northeast-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdA %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-1","az":"a","replaced":true},"Resource":"",
+              ""},"NeedReplaceAz-ap-northeast-1a":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"ap-northeast-1a\\" in $agg.replaceTargets[region = \\"ap-northeast-1\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-1a"}],"Default":"NeedReplaceAz-ap-northeast-1c"},"NeedReplaceAz-ap-northeast-1c":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"ap-northeast-1c\\" in $agg.replaceTargets[region = \\"ap-northeast-1\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-1c"}],"Default":"ReplaceRouteDone-ap-northeast-1"},"ReplaceRt-ap-northeast-1a":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-1c","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-1"}],"Type":"Task","Arguments":{"region":"ap-northeast-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdA %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-1","azName":"ap-northeast-1a","replaced":true},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"ReplaceRouteFailed-ap-northeast-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","replaced":false},"End":true},"ReplaceRt-ap-northeast-1-b":{"QueryLanguage":"JSONata","Next":"ReplaceRouteDone-ap-northeast-1","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-1"}],"Type":"Task","Arguments":{"region":"ap-northeast-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdB %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-1","az":"b","replaced":true},"Resource":"",
+              ""},"ReplaceRouteFailed-ap-northeast-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","replaced":false},"End":true},"ReplaceRt-ap-northeast-1c":{"QueryLanguage":"JSONata","Next":"ReplaceRouteDone-ap-northeast-1","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-1"}],"Type":"Task","Arguments":{"region":"ap-northeast-1","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdC %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-1","azName":"ap-northeast-1c","replaced":true},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"ReplaceRouteDone-ap-northeast-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","replaced":true},"End":true}}},{"StartAt":"NeedReplace-ap-northeast-3","States":{"NeedReplace-ap-northeast-3":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% $count($agg.replaceTargets[region = \\"ap-northeast-3\\"]) > 0 %}","Next":"DescribeRt-ap-northeast-3"}],"Default":"SkipReplace-ap-northeast-3"},"SkipReplace-ap-northeast-3":{"Type":"Pass","QueryLanguage":"JSONata","End":true},"DescribeRt-ap-northeast-3":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-3-a","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-3"}],"Type":"Task","Arguments":{"region":"ap-northeast-3","action":"describeRouteTables","service":"ec2","parameters":{"Filters":[{"Name":"tag:failover-role","Values":["inspection-cwan-rt"]},{"Name":"tag:failover-region","Values":["ap-northeast-3"]}]}},"Assign":{"rtIdA":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"a\\"][0].RouteTableId) %}","rtIdB":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"b\\"][0].RouteTableId) %}","survivorEndpoint":"{% ($t := $agg.replaceTargets[region = \\"ap-northeast-3\\"][0]; $rts := $states.result.RouteTables; $srt := $rts[Tags[Key = \\"failover-az\\"].Value = $t.survivorAz][0]; $srt.Tags[Key = \\"failover-endpoint\\"][0].Value) %}"},"Resource":"",
+              ""},"ReplaceRouteDone-ap-northeast-1":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-1","replaced":true},"End":true}}},{"StartAt":"NeedReplace-ap-northeast-3","States":{"NeedReplace-ap-northeast-3":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% $count($agg.replaceTargets[region = \\"ap-northeast-3\\"]) > 0 %}","Next":"DescribeRt-ap-northeast-3"}],"Default":"SkipReplace-ap-northeast-3"},"SkipReplace-ap-northeast-3":{"Type":"Pass","QueryLanguage":"JSONata","End":true},"DescribeRt-ap-northeast-3":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-3a","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-3"}],"Type":"Task","Arguments":{"region":"ap-northeast-3","action":"describeRouteTables","service":"ec2","parameters":{"Filters":[{"Name":"tag:failover-role","Values":["inspection-cwan-rt"]},{"Name":"tag:failover-region","Values":["ap-northeast-3"]}]}},"Assign":{"rtIdA":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"ap-northeast-3a\\"][0].RouteTableId) %}","rtIdB":"{% ($rts := $states.result.RouteTables; $rts[Tags[Key = \\"failover-az\\"].Value = \\"ap-northeast-3b\\"][0].RouteTableId) %}","survivorEndpoint":"{% ($t := $agg.replaceTargets[region = \\"ap-northeast-3\\"][0]; $rts := $states.result.RouteTables; $srt := $rts[Tags[Key = \\"failover-az\\"].Value = $t.survivorAz][0]; $srt.Tags[Key = \\"failover-endpoint\\"][0].Value) %}"},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"NeedReplaceAz-ap-northeast-3-a":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"a\\" in $agg.replaceTargets[region = \\"ap-northeast-3\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-3-a"}],"Default":"NeedReplaceAz-ap-northeast-3-b"},"NeedReplaceAz-ap-northeast-3-b":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"b\\" in $agg.replaceTargets[region = \\"ap-northeast-3\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-3-b"}],"Default":"ReplaceRouteDone-ap-northeast-3"},"ReplaceRt-ap-northeast-3-a":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-3-b","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-3"}],"Type":"Task","Arguments":{"region":"ap-northeast-3","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdA %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-3","az":"a","replaced":true},"Resource":"",
+              ""},"NeedReplaceAz-ap-northeast-3a":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"ap-northeast-3a\\" in $agg.replaceTargets[region = \\"ap-northeast-3\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-3a"}],"Default":"NeedReplaceAz-ap-northeast-3b"},"NeedReplaceAz-ap-northeast-3b":{"Type":"Choice","QueryLanguage":"JSONata","Choices":[{"Condition":"{% \\"ap-northeast-3b\\" in $agg.replaceTargets[region = \\"ap-northeast-3\\"][0].failedAzs %}","Next":"ReplaceRt-ap-northeast-3b"}],"Default":"ReplaceRouteDone-ap-northeast-3"},"ReplaceRt-ap-northeast-3a":{"QueryLanguage":"JSONata","Next":"NeedReplaceAz-ap-northeast-3b","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-3"}],"Type":"Task","Arguments":{"region":"ap-northeast-3","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdA %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-3","azName":"ap-northeast-3a","replaced":true},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
                   "Arn",
                 ],
               },
-              ""},"ReplaceRouteFailed-ap-northeast-3":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","replaced":false},"End":true},"ReplaceRt-ap-northeast-3-b":{"QueryLanguage":"JSONata","Next":"ReplaceRouteDone-ap-northeast-3","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-3"}],"Type":"Task","Arguments":{"region":"ap-northeast-3","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdB %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-3","az":"b","replaced":true},"Resource":"",
+              ""},"ReplaceRouteFailed-ap-northeast-3":{"Type":"Pass","QueryLanguage":"JSONata","Output":{"region":"ap-northeast-3","replaced":false},"End":true},"ReplaceRt-ap-northeast-3b":{"QueryLanguage":"JSONata","Next":"ReplaceRouteDone-ap-northeast-3","Retry":[{"ErrorEquals":["Lambda.ClientExecutionTimeoutException","Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"ReplaceRouteFailed-ap-northeast-3"}],"Type":"Task","Arguments":{"region":"ap-northeast-3","action":"replaceRoute","service":"ec2","parameters":{"RouteTableId":"{% $rtIdB %}","DestinationCidrBlock":"0.0.0.0/0","VpcEndpointId":"{% $survivorEndpoint %}"}},"Output":{"region":"ap-northeast-3","azName":"ap-northeast-3b","replaced":true},"Resource":"",
               {
                 "Fn::GetAtt": [
                   "CrossRegionAwsSdk8a0c93f3dbef4b71ac137aaf2048ce7eF7430F4F",
@@ -1033,6 +1110,31 @@ exports[`OrchestratorStack snapshot 1`] = `
       },
       "Type": "AWS::StepFunctions::StateMachine",
       "UpdateReplacePolicy": "Delete",
+    },
+    "OrchestratorLogTransformer": {
+      "Properties": {
+        "LogGroupIdentifier": {
+          "Ref": "OrchestratorLogsDA257AF9",
+        },
+        "TransformerConfig": [
+          {
+            "ParseJSON": {
+              "Source": "@message",
+            },
+          },
+          {
+            "AddKeys": {
+              "Entries": [
+                {
+                  "Key": "coreNetworkId",
+                  "Value": "core-network-0000",
+                },
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Logs::Transformer",
     },
     "OrchestratorLogsDA257AF9": {
       "DeletionPolicy": "Retain",
@@ -1155,13 +1257,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::IAM::Policy",
     },
     "ProbeInvokeErrorMetricFC9DD41E": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
-        "FilterPattern": "{ $.type = "PassStateEntered" && ($.details.name = "HealthCheckFail-us-east-1-a" || $.details.name = "HealthCheckConfirmFail-us-east-1-a" || $.details.name = "HealthCheckFail-us-east-1-b" || $.details.name = "HealthCheckConfirmFail-us-east-1-b" || $.details.name = "HealthCheckFail-ap-northeast-1-a" || $.details.name = "HealthCheckConfirmFail-ap-northeast-1-a" || $.details.name = "HealthCheckFail-ap-northeast-1-b" || $.details.name = "HealthCheckConfirmFail-ap-northeast-1-b" || $.details.name = "HealthCheckFail-ap-northeast-3-a" || $.details.name = "HealthCheckConfirmFail-ap-northeast-3-a" || $.details.name = "HealthCheckFail-ap-northeast-3-b" || $.details.name = "HealthCheckConfirmFail-ap-northeast-3-b") }",
+        "ApplyOnTransformedLogs": true,
+        "FilterPattern": "{ $.type = "PassStateEntered" && ($.details.name = "HealthCheckFail-us-east-1a" || $.details.name = "HealthCheckConfirmFail-us-east-1a" || $.details.name = "HealthCheckFail-us-east-1b" || $.details.name = "HealthCheckConfirmFail-us-east-1b" || $.details.name = "HealthCheckFail-ap-northeast-1a" || $.details.name = "HealthCheckConfirmFail-ap-northeast-1a" || $.details.name = "HealthCheckFail-ap-northeast-1c" || $.details.name = "HealthCheckConfirmFail-ap-northeast-1c" || $.details.name = "HealthCheckFail-ap-northeast-3a" || $.details.name = "HealthCheckConfirmFail-ap-northeast-3a" || $.details.name = "HealthCheckFail-ap-northeast-3b" || $.details.name = "HealthCheckConfirmFail-ap-northeast-3b") }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorProbeInvokeError",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -1171,13 +1283,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::Logs::MetricFilter",
     },
     "PutPolicyMetricA62D76EC": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "TaskStateEntered" && $.details.name = "PutPolicy" }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorPutPolicy",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -1187,13 +1309,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::Logs::MetricFilter",
     },
     "ReplaceRouteDoneMetricD61EAB68": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "PassStateEntered" && ($.details.name = "ReplaceRouteDone-us-east-1" || $.details.name = "ReplaceRouteDone-ap-northeast-1" || $.details.name = "ReplaceRouteDone-ap-northeast-3") }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorReplaceRouteDone",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -1203,13 +1335,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::Logs::MetricFilter",
     },
     "ReplaceRouteFailedMetric012D5CDB": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "PassStateEntered" && ($.details.name = "ReplaceRouteFailed-us-east-1" || $.details.name = "ReplaceRouteFailed-ap-northeast-1" || $.details.name = "ReplaceRouteFailed-ap-northeast-3") }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorReplaceRouteFailed",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -1230,23 +1372,9 @@ exports[`OrchestratorStack snapshot 1`] = `
                     "Ref": "AWS::AccountId",
                   },
                   "aws:SourceArn": {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":scheduler:",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        ":",
-                        {
-                          "Ref": "AWS::AccountId",
-                        },
-                        ":schedule-group/default",
-                      ],
+                    "Fn::GetAtt": [
+                      "FailoverScheduleGroup7A8C701D",
+                      "Arn",
                     ],
                   },
                 },
@@ -1286,13 +1414,23 @@ exports[`OrchestratorStack snapshot 1`] = `
       "Type": "AWS::IAM::Policy",
     },
     "SkipAlreadyAppliedMetricF9E226DD": {
+      "DependsOn": [
+        "OrchestratorLogTransformer",
+      ],
       "Properties": {
+        "ApplyOnTransformedLogs": true,
         "FilterPattern": "{ $.type = "PassStateEntered" && $.details.name = "SkipAlreadyApplied" }",
         "LogGroupName": {
           "Ref": "OrchestratorLogsDA257AF9",
         },
         "MetricTransformations": [
           {
+            "Dimensions": [
+              {
+                "Key": "CoreNetwork",
+                "Value": "$.coreNetworkId",
+              },
+            ],
             "MetricName": "OrchestratorSkipAlreadyApplied",
             "MetricNamespace": "NfgFailover",
             "MetricValue": "1",
@@ -1750,11 +1888,13 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "64fb36bc5c2d5110728f4256083f6b2e75791f7d0b95ccf054cac6eb57333d38.zip",
+          "S3Key": "6257776f1ae1c65a8b20d9ada81f7ed9409ca4c545133bcacb6d744053bad766.zip",
         },
         "Environment": {
           "Variables": {
-            "AZ_LETTER": "a",
+            "AZ": "us-east-1a",
+            "CORE_NETWORK_ID": "core-network-0000",
+            "METRIC_NAMESPACE": "NfgFailover",
             "PROBE_ATTEMPTS": "3",
             "PROBE_ENDPOINT_TIERS": "[[{"nsOfZone":"amazonaws.com","port":53},{"host":"checkip.amazonaws.com","port":443}],[{"host":"1.1.1.1","port":53},{"host":"8.8.8.8","port":53}]]",
             "PROBE_INTERVAL_SECONDS": "0.3",
@@ -1763,9 +1903,12 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
         },
         "Handler": "index.handler",
         "LoggingConfig": {
+          "ApplicationLogLevel": "INFO",
+          "LogFormat": "JSON",
           "LogGroup": {
             "Ref": "HealthCheckVpcProbeLogGroupAD93C38E2",
           },
+          "SystemLogLevel": "INFO",
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1774,7 +1917,7 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
           ],
         },
         "Runtime": "python3.14",
-        "Timeout": 25,
+        "Timeout": 27,
         "VpcConfig": {
           "SecurityGroupIds": [
             {
@@ -1849,11 +1992,13 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "64fb36bc5c2d5110728f4256083f6b2e75791f7d0b95ccf054cac6eb57333d38.zip",
+          "S3Key": "6257776f1ae1c65a8b20d9ada81f7ed9409ca4c545133bcacb6d744053bad766.zip",
         },
         "Environment": {
           "Variables": {
-            "AZ_LETTER": "b",
+            "AZ": "us-east-1b",
+            "CORE_NETWORK_ID": "core-network-0000",
+            "METRIC_NAMESPACE": "NfgFailover",
             "PROBE_ATTEMPTS": "3",
             "PROBE_ENDPOINT_TIERS": "[[{"nsOfZone":"amazonaws.com","port":53},{"host":"checkip.amazonaws.com","port":443}],[{"host":"1.1.1.1","port":53},{"host":"8.8.8.8","port":53}]]",
             "PROBE_INTERVAL_SECONDS": "0.3",
@@ -1862,9 +2007,12 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
         },
         "Handler": "index.handler",
         "LoggingConfig": {
+          "ApplicationLogLevel": "INFO",
+          "LogFormat": "JSON",
           "LogGroup": {
             "Ref": "HealthCheckVpcProbeLogGroupBE2ED2A2E",
           },
+          "SystemLogLevel": "INFO",
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1873,7 +2021,7 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
           ],
         },
         "Runtime": "python3.14",
-        "Timeout": 25,
+        "Timeout": 27,
         "VpcConfig": {
           "SecurityGroupIds": [
             {
@@ -1938,110 +2086,6 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "HealthCheckVpcProbeHealthyAB611FC15": {
-      "Properties": {
-        "FilterPattern": "{ $.healthy IS TRUE }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupAD93C38E2",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeHealthy",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "1",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
-    "HealthCheckVpcProbeHealthyB4BA85EB4": {
-      "Properties": {
-        "FilterPattern": "{ $.healthy IS TRUE }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupBE2ED2A2E",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeHealthy",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "1",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
-    "HealthCheckVpcProbeLatencyAA4BD8AAE": {
-      "Properties": {
-        "FilterPattern": "{ $.latencyMs >= 0 }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupAD93C38E2",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeLatencyMs",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "$.latencyMs",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
-    "HealthCheckVpcProbeLatencyBB13ED3A2": {
-      "Properties": {
-        "FilterPattern": "{ $.latencyMs >= 0 }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupBE2ED2A2E",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeLatencyMs",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "$.latencyMs",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
     "HealthCheckVpcProbeLogGroupAD93C38E2": {
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -2058,161 +2102,45 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
     },
-    "HealthCheckVpcProbeTier2A392CAF0D": {
+    "HealthCheckVpcProbeUnhealthyAlarm0A6800A9": {
       "Properties": {
-        "FilterPattern": "{ $.tiersProbed >= 2 }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupAD93C38E2",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "検査経路の unhealthy が継続 (",
               {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
+                "Ref": "AWS::Region",
               },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
+              ")",
             ],
-            "MetricName": "ProbeTier2Contact",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "1",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
-    "HealthCheckVpcProbeTier2B7D470AEF": {
-      "Properties": {
-        "FilterPattern": "{ $.tiersProbed >= 2 }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupBE2ED2A2E",
+          ],
         },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeTier2Contact",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "1",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
-    "HealthCheckVpcProbeUnhealthyA56BC49BB": {
-      "Properties": {
-        "FilterPattern": "{ $.healthy IS FALSE }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupAD93C38E2",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeUnhealthy",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "1",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
-    },
-    "HealthCheckVpcProbeUnhealthyAlarmA0B2C2C07": {
-      "Properties": {
-        "AlarmDescription": "検査経路の unhealthy が 15 分継続 (AZ a)",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": [
+        "EvaluationPeriods": 5,
+        "Metrics": [
           {
-            "Name": "AzLetter",
-            "Value": "a",
-          },
-          {
-            "Name": "ProbeRegion",
-            "Value": {
-              "Ref": "AWS::Region",
+            "Expression": {
+              "Fn::Join": [
+                "",
+                [
+                  "SELECT SUM(ProbeUnhealthy) FROM SCHEMA("NfgFailover", EdgeLocation, AvailabilityZone, CoreNetwork) WHERE EdgeLocation = '",
+                  {
+                    "Ref": "AWS::Region",
+                  },
+                  "' AND CoreNetwork = 'core-network-0000' GROUP BY AvailabilityZone ORDER BY SUM() DESC",
+                ],
+              ],
             },
+            "Id": "q1",
+            "Period": 180,
+            "ReturnData": true,
           },
         ],
-        "EvaluationPeriods": 5,
-        "MetricName": "ProbeUnhealthy",
-        "Namespace": "NfgFailover",
-        "Period": 180,
-        "Statistic": "Sum",
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
-    },
-    "HealthCheckVpcProbeUnhealthyAlarmB1B3F5696": {
-      "Properties": {
-        "AlarmDescription": "検査経路の unhealthy が 15 分継続 (AZ b)",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": [
-          {
-            "Name": "AzLetter",
-            "Value": "b",
-          },
-          {
-            "Name": "ProbeRegion",
-            "Value": {
-              "Ref": "AWS::Region",
-            },
-          },
-        ],
-        "EvaluationPeriods": 5,
-        "MetricName": "ProbeUnhealthy",
-        "Namespace": "NfgFailover",
-        "Period": 180,
-        "Statistic": "Sum",
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "HealthCheckVpcProbeUnhealthyBA37483C4": {
-      "Properties": {
-        "FilterPattern": "{ $.healthy IS FALSE }",
-        "LogGroupName": {
-          "Ref": "HealthCheckVpcProbeLogGroupBE2ED2A2E",
-        },
-        "MetricTransformations": [
-          {
-            "Dimensions": [
-              {
-                "Key": "ProbeRegion",
-                "Value": "$.region",
-              },
-              {
-                "Key": "AzLetter",
-                "Value": "$.azLetter",
-              },
-            ],
-            "MetricName": "ProbeUnhealthy",
-            "MetricNamespace": "NfgFailover",
-            "MetricValue": "1",
-          },
-        ],
-      },
-      "Type": "AWS::Logs::MetricFilter",
     },
     "InspectionVpc238DD311": {
       "Properties": {
@@ -2320,7 +2248,7 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
         "Tags": [
           {
             "Key": "failover-az",
-            "Value": "a",
+            "Value": "us-east-1a",
           },
           {
             "Key": "failover-endpoint",
@@ -2402,7 +2330,7 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
         "Tags": [
           {
             "Key": "failover-az",
-            "Value": "b",
+            "Value": "us-east-1b",
           },
           {
             "Key": "failover-endpoint",
@@ -2896,7 +2824,7 @@ exports[`RegionStack (NFG あり: us-east-1) snapshot 1`] = `
         "RuleGroup": {
           "RulesSource": {
             "RulesString": "pass icmp any any -> any any (alert; sid:2000001; rev:1; msg:"INSPECTED at us-east-1 - ICMP";)
-pass tls any any -> any any (ssl_state:client_hello; flow:to_server,established; alert; sid:2000002; rev:1; msg:"INSPECTED at us-east-1 - TLS";)
+pass tls any any -> any any (tls.sni; content:"checkip.amazonaws.com"; nocase; endswith; ssl_state:client_hello; flow:to_server,established; alert; sid:2000002; rev:1; msg:"INSPECTED at us-east-1 - TLS checkip.amazonaws.com";)
 pass tcp any any -> any any (flow:not_established; sid:3000001; rev:1;)
 pass tcp any any -> any any (flow:established; sid:3000002; rev:1;)
 pass udp any any -> any any (sid:3000003; rev:1;)

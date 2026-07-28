@@ -18,9 +18,8 @@
 | ap-northeast-3 | apne3 | 9 | NFG あり (検査 + ヘルスチェック対象) |
 | ap-southeast-1 | apse1 | 11 | NFG なし <br>両端 NFG なしペアの観測用 (Workload のみ) |
 
-NFG ありリージョンは各 2 AZ (a / b) に Network Firewall のエンドポイントとヘルスチェック Lambda を持つ。
-a / b は設定上の AZ 一覧 (config の availabilityZones 配列) の 1 番目と 2 番目を指す論理ラベルであり、ダッシュボードのメトリクス次元も同じラベルを使う。
-実 AZ 名とは対応しないことがあり、apne1 の実 AZ は ap-northeast-1a / ap-northeast-1c である。
+NFG ありリージョンは各 2 AZ に Network Firewall のエンドポイントとヘルスチェック Lambda を持つ。
+タグ / 環境変数 / SFN のステート名には実 AZ 名 (us-east-1a 等) を使う。apne1 の AZ は ap-northeast-1a / ap-northeast-1c である。
 
 ### 用語
 
@@ -133,7 +132,7 @@ avoidRegions はヘルスチェックの検出と LIVE から復元した集合�
 補足を 3 点挙げる。
 
 - 「適用」は初回のみ実行される。適用直後、迂回がまだヘルスチェックの測定に反映されない間のサイクルは、障害判定リージョンが残るため起動するが、LIVE との一致を検出してスキップする (`skipped: already-applied`)。迂回が有効になった後の定常状態は障害判定リージョンが空になり、起動せず NoRegionFailover で終わる
-- 片 AZ 障害の AZ が a か b かで動作は変わらない。ルートテーブルはタグで特定するため両方向とも同じロジックが働く。付け替え後は障害 AZ のヘルスチェックも健全 AZ のエンドポイント経由で成功するため、片 AZ 障害の検出は通常解消する。検出が継続する間に ReplaceRoute が再実行されても、同じ値への置き換えのため冪等である
+- 片 AZ 障害はどちらの AZ で起きても動作は変わらない。ルートテーブルはタグで特定するため両方向とも同じロジックが働く。付け替え後は障害 AZ のヘルスチェックも健全 AZ のエンドポイント経由で成功するため、片 AZ 障害の検出は通常解消する。検出が継続する間に ReplaceRoute が再実行されても、同じ値への置き換えのため冪等である
 - fail-close (#27) はポリシーを変更しない。直前の override が指す NFG も両 AZ 障害のため、トラフィックはブラックホール化し、結果として「検査できない通信は通さない」状態になる
 
 ## 障害時の見え方と運用対応
@@ -173,13 +172,16 @@ avoidRegions はヘルスチェックの検出と LIVE から復元した集合�
 - どのリージョンで検査されたかは、Network Firewall の ALERT ログに出る `INSPECTED at <リージョン>` で実測できる
 - AZ 単位の経路は Network Firewall の FLOW ログで確認する
 - 障害検知中は確認再測定によりヘルスチェックが 1 サイクルに 2 回実行されるため、ヘルスチェック系カスタムメトリクス (ProbeUnhealthy 等) は同一サイクルで 2 カウントされ得る (平常時は 1)
+- ProbeLatencyMs は成功した TCP 接続の最小レイテンシであり、検査経路 (NFW / NAT) の実力値を表す。NS レコードの解決時間は VPC リゾルバー宛で検査経路を通らないため、ログの `nsLookupMs` フィールドに分離している
 
 ## 通信ペアごとの検査リージョン
 
-east-west 通信 (VPC 間) の検査リージョンは「ペアの両端 2 リージョン」から選ばれる。
+override を書かない場合、east-west 通信 (VPC 間) の検査リージョンは Cloud WAN のデフォルト規則で決まる。
 両端に NFG があれば優先度上位の端、片端だけならその端、両端になければ優先度 1 位のリージョンが使われる。
-両端にない場合は地理チェーンに従い、グループの NFG 優先度チェーンの先頭が選ばれる。FIB で確認済みである (evidence)。
-この選択に地理的な近さは影響しない。
+このデフォルト規則に地理的な近さは影響しない。
+
+本構成では地理グループの優先度チェーン (README の「検査先の地理グループ」) に基づく override を生成し、地理的に近い NFG で検査されるようにしている。
+NFG なしリージョンの自己ペアは baseline から override を常設し、障害時はフェイルオーバーがチェーンに沿って検査先を切り替える。FIB で確認済みである (evidence)。
 
 同一リージョン内の VPC 間通信 (各リージョンの Workload VPC 1 ↔ 2) は両端が同じリージョンなので、そのリージョンに NFG があればローカルで検査される。
 FIB で同一リージョン内の VPC 間通信がローカル NFG で検査されることを確認済みである (evidence)。
@@ -258,7 +260,7 @@ FIB で同一リージョン内の VPC 間通信がローカル NFG で検査さ
 
 ### send-to (egress) の per-edge override
 
-send-to は per-edge である。各エッジの優先 NFG が健全ならそれを、障害中なら failoverTarget を向く。優先 NFG は、NFG ありのエッジでは自身、NFG なしのエッジでは設計時に静的に定めた最近傍リージョンである (usw2 → use1 / apse1 → apne1。config.ts の `preferredNfg` で定義)。平常時も baseline ポリシーが同じマップを常設する。
+send-to は per-edge である。各エッジは地理グループの優先度チェーン (README の「検査先の地理グループ」) を先頭から走査し、最初に健全なリージョンを向く。チェーンは NFG ありのエッジでは自身が先頭、NFG なしのエッジでは config.ts の `preferredNfgChain` で定義する。全チェーンが avoid 中の場合のみ failoverTarget へ落ちる。平常時も baseline ポリシーが同じマップを常設する。
 
 | avoidRegions | target | use1 エッジ | usw2 エッジ | apne1 エッジ | apne3 エッジ | apse1 エッジ |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -274,8 +276,10 @@ send-to は per-edge である。各エッジの優先 NFG が健全ならそれ
 ### send-via (east-west) の per-pair override
 
 send-via は最小 override 方式をとる。
-デフォルトの検査先が障害中の NFG に向かうペアだけを override し、値は「健全な NFG 端の優先上位」か「failoverTarget」にする。
+デフォルトの検査先が障害中の NFG に向かうペアだけを override し、値はペアごとの優先度チェーンを先頭から走査して最初に健全なリージョンにする。
+ペアのチェーンは、両端が同一の地理グループならそのグループのチェーン、グループをまたぐならペアの NFG 端を先頭に置き残りを優先度順に続けたものになる (健全な端があればそちらで検査するため)。
 override されないペアはデフォルトの検査先に従うため、健全リージョンのローカル検査が維持される。
+NFG なしリージョンの自己ペアは baseline から override を常設しており、フェイルオーバー時も常に生成する。
 
 | avoidRegions | 生成エントリ (edge-sets → use-edge-location) |
 | --- | --- |

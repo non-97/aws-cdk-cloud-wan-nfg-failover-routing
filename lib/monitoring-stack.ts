@@ -4,16 +4,24 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { Construct } from "constructs";
 import { MONITORING, REGION_CONFIGS, isNfgRegion } from "./config";
+import { ProbeTarget } from "./orchestrator-stack";
+import { NatGatewayRef } from "./constructs";
 
 export interface MonitoringStackProps extends cdk.StackProps {
   /** SFN ネイティブメトリクスの参照元 (同一リージョン) */
   readonly stateMachine: sfn.StateMachine;
   /** Logs Insights ウィジェットの対象 (同一リージョン) */
   readonly orchestratorLogGroup: logs.LogGroup;
-  /** CNE メトリクスの CoreNetwork 次元と Logs Insights フィルターに使用 */
+  /** CNE メトリクスの CoreNetwork ディメンションと Logs Insights フィルターに使用 */
   readonly coreNetworkId: string;
-  /** NFG リージョンの unhealthy 継続アラーム ARN (リージョン x AZ。ダッシュボード表示用) */
+  /** NFG リージョンの unhealthy 継続アラーム ARN (リージョンあたり 1 つ。ダッシュボード表示用) */
   readonly probeAlarmArns: string[];
+  /** probe Lambda の Errors メトリクス用 */
+  readonly probeTargets: readonly ProbeTarget[];
+  /** NFW メトリクスの FirewallName ディメンション。キーはリージョン */
+  readonly firewallNames: Readonly<Record<string, string>>;
+  /** NAT ゲートウェイメトリクスの NatGatewayId ディメンションとラベル用の AZ 名。キーはリージョン */
+  readonly natGateways: Readonly<Record<string, readonly NatGatewayRef[]>>;
 }
 
 /**
@@ -24,8 +32,9 @@ export interface MonitoringStackProps extends cdk.StackProps {
  * docs/failure-scenarios.md の「実行結果の読み方」に揃える。
  *
  * - カスタムメトリクス (NfgFailover 名前空間) は各スタックのメトリクスフィルターが発行する
- * - 他リージョンのネイティブメトリクスは SEARCH 式 (searchRegion) で拾い、リソース名の
- *   配管を持たない (probe Lambda / NFW / NAT GW の名前は synth 時決定のため)
+ * - 他リージョンのネイティブメトリクスは、自プロジェクトのリソースだけを拾うようリソース
+ *   識別子で絞り込む。Firewall 名は synth 時に確定するため素の文字列で渡し、Lambda 関数名と
+ *   NAT ゲートウェイ ID はデプロイ時決定のため crossRegionReferences 経由で渡す
  * - AWS/Network Manager (Cloud WAN) のメトリクスは us-west-2 のみに集約発行される
  */
 export class MonitoringStack extends cdk.Stack {
@@ -34,60 +43,10 @@ export class MonitoringStack extends cdk.Stack {
 
     const nfgRegions = REGION_CONFIGS.filter(isNfgRegion).map((r) => r.region);
     const allRegions = REGION_CONFIGS.map((r) => r.region);
-    const azLetters = ["a", "b"];
-
-    // probe のカスタムメトリクス (リージョン x AZ の次元付き。発行元リージョンを指定)
-    const probeMetric = (
-      metricName: string,
-      region: string,
-      az: string
-    ): cloudwatch.Metric =>
-      new cloudwatch.Metric({
-        namespace: MONITORING.namespace,
-        metricName,
-        dimensionsMap: { ProbeRegion: region, AzLetter: az },
-        statistic: "Sum",
-        period: cdk.Duration.minutes(3),
-        region,
-        label: `${region}/${az}`,
-      });
-    const probeMetricsAll = (metricName: string): cloudwatch.Metric[] =>
-      nfgRegions.flatMap((region) =>
-        azLetters.map((az) => probeMetric(metricName, region, az))
-      );
-    // 6 系列を 1 値に合計する (単一値ウィジェット用)
-    const probeSum = (
-      metricName: string,
-      label: string
-    ): cloudwatch.MathExpression => {
-      const usingMetrics = Object.fromEntries(
-        probeMetricsAll(metricName).map((m, i) => [`m${i}`, m])
-      );
-      return new cloudwatch.MathExpression({
-        expression: `SUM([${Object.keys(usingMetrics).join(",")}])`,
-        usingMetrics,
-        label,
-        period: cdk.Duration.hours(24),
-      });
-    };
-
-    // オーケストレーターのカスタムメトリクス (次元なし、us-west-2)
-    const orchestratorMetric = (
-      metricName: string,
-      label: string,
-      period: cdk.Duration
-    ): cloudwatch.Metric =>
-      new cloudwatch.Metric({
-        namespace: MONITORING.namespace,
-        metricName,
-        statistic: "Sum",
-        period,
-        label,
-      });
 
     // 他リージョンのネイティブメトリクスを名前の配管なしで拾う SEARCH 式。
-    // 次元セットが公式に判明しているものはスキーマ形式 {Namespace,Dim,...} を使う
-    // (公式ドキュメントの実例と同形)。式ごと渡す形にし、名前空間と次元をここで確定する
+    // ディメンションセットが公式に判明しているものはスキーマ形式 {Namespace,Dim,...} を使う
+    // (公式ドキュメントの実例と同形)。式ごと渡す形にし、名前空間とディメンションをここで確定する
     const search = (
       expression: string,
       region: string,
@@ -98,13 +57,69 @@ export class MonitoringStack extends cdk.Stack {
         searchRegion: region,
         label,
       });
-    const lambdaErrorsSearch = (region: string): cloudwatch.MathExpression =>
+
+    // probe のカスタムメトリクス (リージョン x CoreNetwork のディメンション付き。発行元リージョンを指定)。
+    // AZ ID は synth 時に分からない (Lambda メタデータエンドポイントで実行時取得のため) ので
+    // SEARCH 式で動的にマッチさせる。EdgeLocation / CoreNetwork で絞り込むだけで
+    // AvailabilityZone ごとの系列は SEARCH が自動展開する
+    // グラフ用 SEARCH の凡例は動的ラベルにする (region の静的文字列だと同一リージョンの
+    // 2 AZ が同じ凡例名になるため。ProbeUnhealthy / ProbeHealthy / ProbeLatencyMs は
+    // 全リージョン共通で EdgeLocation / AvailabilityZone のディメンションを持つ)
+    const dynamicAzLabel =
+      "${PROP('Dim.EdgeLocation')}/${PROP('Dim.AvailabilityZone')}";
+    const probeSearch = (
+      metricName: string,
+      region: string
+    ): cloudwatch.MathExpression =>
       search(
-        `SEARCH('{AWS/Lambda,FunctionName} MetricName="Errors"', 'Sum', 300)`,
+        `SEARCH('{${MONITORING.namespace},EdgeLocation,AvailabilityZone,CoreNetwork} MetricName="${metricName}" EdgeLocation="${region}" CoreNetwork="${props.coreNetworkId}"', 'Sum', 180)`,
         region,
-        region
+        dynamicAzLabel
       );
-    // NFW の次元セット (FirewallName / AvailabilityZone / Engine) は公式記載の次元一覧に
+    const probeSearchAll = (metricName: string): cloudwatch.MathExpression[] =>
+      nfgRegions.map((region) => probeSearch(metricName, region));
+    // SEARCH 式群を 1 値に合計する (単一値ウィジェット用)。
+    // 24h 集計の MathExpression 本体の period (86400) と、内部で使う SEARCH 式の
+    // period 引数を揃える必要があるため、グラフ用 probeSearch (period 180) とは
+    // 別に、probeSum 専用の SEARCH を定義する
+    const probeSum = (
+      metricName: string,
+      label: string
+    ): cloudwatch.MathExpression => {
+      const usingMetrics = Object.fromEntries(
+        nfgRegions.map((region, i) => [
+          `m${i}`,
+          search(
+            `SEARCH('{${MONITORING.namespace},EdgeLocation,AvailabilityZone,CoreNetwork} MetricName="${metricName}" EdgeLocation="${region}" CoreNetwork="${props.coreNetworkId}"', 'Sum', 86400)`,
+            region,
+            region
+          ),
+        ])
+      );
+      return new cloudwatch.MathExpression({
+        expression: `SUM([${Object.keys(usingMetrics).join(",")}])`,
+        usingMetrics,
+        label,
+        period: cdk.Duration.hours(24),
+      });
+    };
+
+    // オーケストレーターのカスタムメトリクス (CoreNetwork ディメンション付き、us-west-2)
+    const orchestratorMetric = (
+      metricName: string,
+      label: string,
+      period: cdk.Duration
+    ): cloudwatch.Metric =>
+      new cloudwatch.Metric({
+        namespace: MONITORING.namespace,
+        metricName,
+        dimensionsMap: { CoreNetwork: props.coreNetworkId },
+        statistic: "Sum",
+        period,
+        label,
+      });
+
+    // NFW のディメンションセット (FirewallName / AvailabilityZone / Engine) は公式記載のディメンション一覧に
     // 基づく組み合わせ。実発行の組み合わせと異なり表示が空になる場合は、実機検証 22 で
     // スキーマ部を外した語検索 (SEARCH('"PassedPackets"', ...)) へ調整する
     const nfwSearch = (
@@ -112,23 +127,41 @@ export class MonitoringStack extends cdk.Stack {
       region: string
     ): cloudwatch.MathExpression =>
       search(
-        `SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName="${metricName}"', 'Sum', 300)`,
+        `SEARCH('{AWS/NetworkFirewall,AvailabilityZone,Engine,FirewallName} MetricName="${metricName}" FirewallName="${props.firewallNames[region]}"', 'Sum', 300)`,
         region,
         region
       );
-    const natSearch = (
+    // NAT ゲートウェイは AZ ごとに 1 台あり、片 AZ だけの枯渇や偏りを見分けたいため
+    // リージョンで合算せず 1 台ずつ系列を分ける
+    // labelPrefix は左右の軸で同じ AZ 名が重複するのを避けるためにつける
+    // statistic は AWS のメトリクス一覧の「most useful statistic」に合わせる。
+    // ActiveConnectionCount は同時接続数の瞬時値のため Max、それ以外は Sum
+    const natMetrics = (
       metricName: string,
-      region: string,
-      label: string
-    ): cloudwatch.MathExpression =>
-      search(
-        `SEARCH('{AWS/NATGateway,NatGatewayId} MetricName="${metricName}"', 'Sum', 300)`,
-        region,
-        label
+      labelPrefix: string,
+      statistic = "Sum"
+    ): cloudwatch.Metric[] =>
+      nfgRegions.flatMap((region) =>
+        (props.natGateways[region] ?? []).map(
+          (nat) =>
+            new cloudwatch.Metric({
+              namespace: "AWS/NATGateway",
+              metricName,
+              dimensionsMap: { NatGatewayId: nat.natGatewayId },
+              region,
+              statistic,
+              period: cdk.Duration.minutes(5),
+              label: `${labelPrefix} ${nat.azName}`,
+            })
+        )
       );
-    // Scheduler は次元の公式記載が無いため語検索 (メトリクス名の完全一致のみ) で拾う
+    // Scheduler は ScheduleGroup ディメンションのみで絞れるため、この仕組み専用のグループを作って分離している
     const schedulerSearch = (metricName: string): cloudwatch.MathExpression =>
-      search(`SEARCH('"${metricName}"', 'Sum', 300)`, this.region, metricName);
+      search(
+        `SEARCH('{AWS/Scheduler,ScheduleGroup} MetricName="${metricName}" ScheduleGroup="${MONITORING.scheduleGroupName}"', 'Sum', 300)`,
+        this.region,
+        metricName
+      );
 
     // 行 1: 参考情報 (直近 24h の合計。0 以外なら docs の「実行結果の読み方」へ)
     const day = cdk.Duration.hours(24);
@@ -151,7 +184,7 @@ export class MonitoringStack extends cdk.Stack {
         height: 4,
       }),
       singleValue(
-        "fail-close 回数 (= 全リージョンの NFG 断)",
+        "fail-close 回数 (= 全リージョンの NFG アタッチメント断)",
         orchestratorMetric("OrchestratorFailClose", "fail-close", day)
       ),
       singleValue(
@@ -159,7 +192,7 @@ export class MonitoringStack extends cdk.Stack {
         orchestratorMetric("OrchestratorFailoverDone", "FailoverDone", day)
       ),
       singleValue(
-        "オーケストラーSFn 実行失敗回数",
+        "オーケストレーターSFn 実行失敗回数",
         props.stateMachine.metricFailed({ period: day })
       ),
       singleValue(
@@ -179,14 +212,25 @@ export class MonitoringStack extends cdk.Stack {
     // 行 2: どのリージョン / AZ が悪いか
     const row2 = [
       new cloudwatch.GraphWidget({
-        title: "unhealthy probe (リージョン x AZ。1 本 = 片AZ、2 本 = 両AZ)",
-        left: probeMetricsAll("ProbeUnhealthy"),
+        title: "unhealthy probe (AZ別)",
+        left: probeSearchAll("ProbeUnhealthy"),
         width: 12,
         height: 6,
       }),
       new cloudwatch.GraphWidget({
-        title: "probe Lambda Errors (リージョン別 SEARCH)",
-        left: nfgRegions.map((region) => lambdaErrorsSearch(region)),
+        title: "probe Lambda Errors (AZ 別)",
+        left: props.probeTargets.map(
+          (t) =>
+            new cloudwatch.Metric({
+              namespace: "AWS/Lambda",
+              metricName: "Errors",
+              dimensionsMap: { FunctionName: t.functionName },
+              region: t.region,
+              statistic: "Sum",
+              period: cdk.Duration.minutes(5),
+              label: t.azName,
+            })
+        ),
         width: 12,
         height: 6,
       }),
@@ -196,21 +240,21 @@ export class MonitoringStack extends cdk.Stack {
     const fiveMin = cdk.Duration.minutes(5);
     const row3 = [
       new cloudwatch.GraphWidget({
-        title: "オーケストレーターSFnの挙動 (状態通過カウント)",
+        title: "オーケストレーターSFnによる操作",
         left: [
           orchestratorMetric(
             "OrchestratorPutPolicy",
-            "PutPolicy (切替開始)",
+            "PutPolicy (リージョンフェイルオーバー切替開始)",
             fiveMin
           ),
           orchestratorMetric(
             "OrchestratorFailoverDone",
-            "FailoverDone (切替完了)",
+            "FailoverDone (リージョンフェイルオーバー切替完了)",
             fiveMin
           ),
           orchestratorMetric(
             "OrchestratorSkipAlreadyApplied",
-            "SkipAlreadyApplied (適用済み)",
+            "SkipAlreadyApplied (Core Network Policy適用済み)",
             fiveMin
           ),
           orchestratorMetric("OrchestratorFailClose", "FailClose", fiveMin),
@@ -229,7 +273,7 @@ export class MonitoringStack extends cdk.Stack {
         height: 6,
       }),
       new cloudwatch.LogQueryWidget({
-        title: "オーケストレーたーSFnの実行結果 (直近 20 件)",
+        title: "オーケストレーターSFnの実行結果 (直近 20 件)",
         logGroupNames: [props.orchestratorLogGroup.logGroupName],
         queryLines: [
           "fields @timestamp, details.name as state",
@@ -283,34 +327,26 @@ export class MonitoringStack extends cdk.Stack {
       }),
     ];
 
-    // 行 5a: 検査経路の疎通が正しく行えているか (肯定側のシグナルと劣化の先行指標)
-    const probeLatencyMetric = (
-      region: string,
-      az: string
-    ): cloudwatch.Metric =>
-      new cloudwatch.Metric({
-        namespace: MONITORING.namespace,
-        metricName: "ProbeLatencyMs",
-        dimensionsMap: { ProbeRegion: region, AzLetter: az },
-        statistic: "Average",
-        period: cdk.Duration.minutes(3),
+    // 行 5a: 検査経路の疎通が正しく行えているか (肯定側のシグナルと劣化の先行指標)。
+    // AZ ID は synth 時に分からないため SEARCH 式で動的にマッチさせる (probeSearch と同形)
+    const probeLatencySearch = (region: string): cloudwatch.MathExpression =>
+      search(
+        `SEARCH('{${MONITORING.namespace},EdgeLocation,AvailabilityZone,CoreNetwork} MetricName="ProbeLatencyMs" EdgeLocation="${region}" CoreNetwork="${props.coreNetworkId}"', 'Average', 180)`,
         region,
-        label: `${region}/${az}`,
-      });
+        dynamicAzLabel
+      );
     const row5a = [
       new cloudwatch.GraphWidget({
         title:
-          "end-to-end 疎通の成立 (3 分ごとに 1 が刻まれ続ければ正常、途切れている場合は = 失敗)",
-        left: probeMetricsAll("ProbeHealthy"),
+          "インターネットへの疎通結果 (3 分ごとに 1 が刻まれ続ければ正常、途切れている場合は失敗)",
+        left: probeSearchAll("ProbeHealthy"),
         width: 12,
         height: 6,
       }),
       new cloudwatch.GraphWidget({
         title:
           "疎通レイテンシ (悪化している場合はリソースの不調もしくはフェイルオーバーによるレイテンシー増によるもの)",
-        left: nfgRegions.flatMap((region) =>
-          azLetters.map((az) => probeLatencyMetric(region, az))
-        ),
+        left: nfgRegions.map((region) => probeLatencySearch(region)),
         width: 12,
         height: 6,
       }),
@@ -322,24 +358,19 @@ export class MonitoringStack extends cdk.Stack {
         title: "NFW PassedPackets (リージョン別 SEARCH)",
         left: nfgRegions.map((region) => nfwSearch("PassedPackets", region)),
         width: 6,
-        height: 6,
+        height: 10,
       }),
       new cloudwatch.GraphWidget({
         title: "NFW DroppedPackets (リージョン別 SEARCH)",
         left: nfgRegions.map((region) => nfwSearch("DroppedPackets", region)),
         width: 6,
-        height: 6,
+        height: 10,
       }),
       new cloudwatch.GraphWidget({
-        title: "NAT GW ErrorPortAllocation / BytesOut (SEARCH)",
-        left: nfgRegions.map((region) =>
-          natSearch("ErrorPortAllocation", region, `err ${region}`)
-        ),
-        right: nfgRegions.map((region) =>
-          natSearch("BytesOutToDestination", region, `bytes ${region}`)
-        ),
+        title: "NAT Gateway BytesOut (NAT ゲートウェイ別)",
+        left: natMetrics("BytesOutToDestination", "bytes"),
         width: 6,
-        height: 6,
+        height: 10,
       }),
       new cloudwatch.GraphWidget({
         title: "CNE エッジ別 BytesIn / BytesOut",
@@ -372,8 +403,37 @@ export class MonitoringStack extends cdk.Stack {
             })
         ),
         width: 6,
-        height: 6,
+        height: 10,
       }),
+    ];
+
+    // 行 5c: NAT ゲートウェイの詳細。ポート枯渇の予兆 (同時接続数) と、
+    // NAT ゲートウェイ自身の異常 (ドロップ) を AZ ごとに切り分けるための行
+    const row5c = [
+      new cloudwatch.GraphWidget({
+        title: "NAT Gateway 同時接続数 / 接続確立数 (NAT ゲートウェイ別)",
+        // 同時接続数は瞬時値のため Max。ErrorPortAllocation が出る手前の予兆になる
+        left: natMetrics("ActiveConnectionCount", "active", "Max"),
+        right: natMetrics("ConnectionEstablishedCount", "established"),
+        width: 12,
+        height: 10,
+      }),
+      new cloudwatch.GraphWidget({
+        title:
+          "NAT Gateway エラー ErrorPortAllocation / PacketsDropCount (NAT ゲートウェイ別)",
+        // どちらも平常時は 0 の異常シグナルのため同じパネルに置く。
+        // ErrorPortAllocation はポート枯渇、PacketsDropCount は NAT ゲートウェイ自身の異常で、
+        // 後者が総パケット数の 0.01% を超える場合は VPC サービス側の問題を疑う。
+        // 一方が突出したときにもう一方が潰れないよう軸を左右に分ける
+        left: natMetrics("ErrorPortAllocation", "err"),
+        right: natMetrics("PacketsDropCount", "drop"),
+        width: 12,
+        height: 10,
+      }),
+    ];
+
+    // 行 6: Cloud WAN のイベントログ (ポリシー適用やアタッチメントの状態変化の履歴)
+    const row6 = [
       new cloudwatch.LogQueryWidget({
         title: "Cloud WAN イベントログ (networkmanagerloggroup)",
         logGroupNames: ["/aws/events/networkmanagerloggroup"],
@@ -488,7 +548,7 @@ export class MonitoringStack extends cdk.Stack {
     new cloudwatch.Dashboard(this, "OperationsDashboard", {
       dashboardName: MONITORING.dashboardName,
       defaultInterval: cdk.Duration.hours(24),
-      widgets: [alarmRow, row1, row2, row3, row4, row5a, row5],
+      widgets: [alarmRow, row1, row2, row3, row4, row5a, row5, row5c, row6],
     });
   }
 }

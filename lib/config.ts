@@ -41,7 +41,7 @@ export const CLOUDWAN = {
     failoverRole: "failover-role",
     /** ReplaceRoute 対象の RT が属するリージョン */
     failoverRegion: "failover-region",
-    /** ReplaceRoute 対象の RT が属する AZ (a / b) */
+    /** ReplaceRoute 対象の RT が属する実 AZ 名 */
     failoverAz: "failover-az",
     /**
      * その RT の AZ 自身の NF エンドポイント ID (vpce-xxx)。ReplaceRoute の向け先は
@@ -93,7 +93,7 @@ export const FAILOVER = {
    * 確認再測定までの待機 (秒)。1 回目の probe で異常を検知したときのみ、この秒数
    * 待って 2 回目の probe を行い、両方 unhealthy の AZ だけを障害と確定する。
    * ReplaceRoute / avoid は復旧が手動の不可逆アクションのため、単一サイクルの
-   * 瞬断 (probe 1 周の最悪 25 秒) の誤検知で発動させない。90 秒は probe 1 周との
+   * 瞬断 (probe 1 周の最悪 約 20 秒) の誤検知で発動させない。90 秒は probe 1 周との
    * 重なりを確実に外す長さで、検知遅延 +約 2 分は RTO 30 分の予算内
    */
   confirmDelaySeconds: 90,
@@ -128,6 +128,8 @@ export const MONITORING = {
   namespace: "NfgFailover",
   /** us-west-2 の MonitoringStack が作成するダッシュボード名 */
   dashboardName: "nfg-failover-operations",
+  /** EventBridge Scheduler の専用グループ名。ダッシュボードの SEARCH 式で他スケジュールと分離するために使う */
+  scheduleGroupName: "nfg-failover",
   /**
    * ログの保持期間。監査要件を想定して 1 年とし、LogGroup の RemovalPolicy は
    * RETAIN にする (cdk destroy してもログは消えない。後片付けは手動削除)
@@ -154,9 +156,9 @@ export interface RegionConfig {
    */
   readonly defaultPriority: number;
   /**
-   * この検証アカウントで使う AZ 名 2 つ (順序が論理 AZ 識別子 a / b に対応する)。
+   * この検証アカウントで使う AZ 名 2 つ。
    * cdk.context.json のキャッシュ値をコードに固定したもの。明示することで
-   * (1) context 再生成による並び替えで azLetter とタグの対応がずれることを防ぎ、
+   * (1) context 再生成による意図しない AZ 名の変更を防ぎ、
    * (2) AZ の問い合わせ (context lookup) 自体が不要になり、cdk.context.json が
    * 無い環境でも synth が決定論的に成功する。
    * 注意: AZ 名が指す物理 AZ はアカウントごとに異なるため、別アカウントへ

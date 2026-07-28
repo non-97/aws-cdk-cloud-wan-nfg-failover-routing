@@ -7,6 +7,7 @@ import {
 } from "../lib/config";
 import { CoreStack } from "../lib/core-stack";
 import { RegionStack } from "../lib/region-stack";
+import { NatGatewayRef } from "../lib/constructs";
 import { OrchestratorStack, ProbeTarget } from "../lib/orchestrator-stack";
 import { MonitoringStack } from "../lib/monitoring-stack";
 
@@ -22,6 +23,8 @@ const coreStack = new CoreStack(app, "NfgFailoverCoreStack", {
 // 各リージョンの Workload / Inspection / HealthCheck VPC
 const probeTargets: ProbeTarget[] = [];
 const probeAlarmArns: string[] = [];
+const firewallNames: Record<string, string> = {};
+const natGateways: Record<string, NatGatewayRef[]> = {};
 const nfgRegionStacks: RegionStack[] = [];
 for (const regionConfig of REGION_CONFIGS) {
   const regionStack = new RegionStack(
@@ -44,11 +47,18 @@ for (const regionConfig of REGION_CONFIGS) {
     for (const probe of regionStack.probeFunctions) {
       probeTargets.push({
         region: regionConfig.region,
-        azLetter: probe.azLetter,
+        azName: probe.azName,
         functionArn: probe.functionArn,
+        functionName: probe.functionName,
       });
-      probeAlarmArns.push(probe.alarmArn);
     }
+    if (regionStack.probeAlarmArn) {
+      probeAlarmArns.push(regionStack.probeAlarmArn);
+    }
+    if (regionStack.firewallName) {
+      firewallNames[regionConfig.region] = regionStack.firewallName;
+    }
+    natGateways[regionConfig.region] = regionStack.natGateways;
   }
 }
 
@@ -75,6 +85,12 @@ const monitoringStack = new MonitoringStack(app, "NfgFailoverMonitoringStack", {
   orchestratorLogGroup: orchestratorStack.logGroup,
   coreNetworkId: coreStack.coreNetworkId,
   probeAlarmArns,
+  probeTargets,
+  firewallNames,
+  natGateways,
   crossRegionReferences: true,
 });
 monitoringStack.addDependency(orchestratorStack);
+for (const regionStack of nfgRegionStacks) {
+  monitoringStack.addDependency(regionStack);
+}

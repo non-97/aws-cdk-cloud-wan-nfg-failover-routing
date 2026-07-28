@@ -1,6 +1,6 @@
 import { App } from "aws-cdk-lib/core";
 import { Template, Match } from "aws-cdk-lib/assertions";
-import { REGION_CONFIGS, isNfgRegion } from "../lib/config";
+import { FAILOVER, REGION_CONFIGS, isNfgRegion } from "../lib/config";
 import { CoreStack } from "../lib/core-stack";
 import { RegionStack } from "../lib/region-stack";
 import { OrchestratorStack, ProbeTarget } from "../lib/orchestrator-stack";
@@ -16,9 +16,9 @@ const newApp = () => new App({ context: { "aws:cdk:bundling-stacks": [] } });
 const CORE_ID = "core-network-0000";
 const CORE_ARN = "arn:aws:networkmanager::123456789012:core-network/core-network-0000";
 
-/** AZ_LETTER 環境変数を持つ = health-check Lambda の判定基準 */
+/** AZ 環境変数を持つ = health-check Lambda の判定基準 */
 const healthCheckLambda = {
-  Environment: { Variables: Match.objectLike({ AZ_LETTER: Match.anyValue() }) },
+  Environment: { Variables: Match.objectLike({ AZ: Match.anyValue() }) },
 };
 
 describe("CoreStack", () => {
@@ -63,14 +63,14 @@ describe("RegionStack (NFG あり: us-east-1)", () => {
       2,
     );
     t.hasResourceProperties("AWS::Lambda::Function", {
-      Environment: { Variables: Match.objectLike({ AZ_LETTER: "a" }) },
+      Environment: { Variables: Match.objectLike({ AZ: "us-east-1a" }) },
     });
     t.hasResourceProperties("AWS::Lambda::Function", {
-      Environment: { Variables: Match.objectLike({ AZ_LETTER: "b" }) },
+      Environment: { Variables: Match.objectLike({ AZ: "us-east-1b" }) },
     });
   });
 
-  test("probe Lambda は tier 化された疎通先 (AWS 管理優先) と timeout 25 秒を持つ", () => {
+  test("probe Lambda は tier 化された疎通先 (AWS 管理優先) と JSON ログ設定を持つ", () => {
     const fns = Object.values(t.findResources("AWS::Lambda::Function")).filter(
       (f: any) => f.Properties?.Environment?.Variables?.PROBE_ENDPOINT_TIERS,
     ) as any[];
@@ -88,11 +88,26 @@ describe("RegionStack (NFG あり: us-east-1)", () => {
         { host: "8.8.8.8", port: 53 },
       ],
     ]);
-    expect(fns[0].Properties.Timeout).toBe(25);
+    // 関数タイムアウトは Step Functions 側の待ち時間 (30 秒) の内側。
+    // 関数がタイムアウトすると EMF に到達せず ProbeUnhealthy が発行されないため、
+    // Lambda 自身が期限前に打ち切って結果を出せる余地を残す
+    expect(fns[0].Properties.Timeout).toBe(FAILOVER.healthCheckTimeoutSeconds - 3);
+    // ログは JSON 形式。Python では print() (EMF) は素通しされ logging だけが JSON に包まれる
+    expect(fns[0].Properties.LoggingConfig.LogFormat).toBe("JSON");
+    expect(fns[0].Properties.LoggingConfig.ApplicationLogLevel).toBe("INFO");
   });
 
-  test("probe のロググループとメトリクスフィルター (unhealthy / tier2 / healthy / latency x 2 AZ)", () => {
-    t.resourceCountIs("AWS::Logs::MetricFilter", 8);
+  test("probe Lambda は EMF 発行に必要な環境変数を持つ (メトリクスフィルターは使わない)", () => {
+    // Probe 系メトリクスは Lambda が EMF で直接発行するため MetricFilter は不要
+    t.resourceCountIs("AWS::Logs::MetricFilter", 0);
+    t.hasResourceProperties("AWS::Lambda::Function", {
+      Environment: {
+        Variables: Match.objectLike({
+          CORE_NETWORK_ID: Match.anyValue(),
+          METRIC_NAMESPACE: "NfgFailover",
+        }),
+      },
+    });
   });
 
   test("Inspection の Cloud WAN アタッチメント RT (2 AZ) にフェイルオーバータグが付く", () => {
@@ -107,7 +122,7 @@ describe("RegionStack (NFG あり: us-east-1)", () => {
     // 2 AZ 分の RT
     expect(tagged).toHaveLength(2);
     // 各 RT は region タグ (us-east-1) と自 AZ の NF endpoint タグ (ReplaceRoute の
-    // 向け先の唯一のソース) を持ち、az タグは a / b で揃う
+    // 向け先の唯一のソース) を持ち、az タグは実 AZ 名で揃う
     const azValues = (tagged as any[]).map((r) => {
       const tags = (r.Properties.Tags ?? []) as Tag[];
       expect(
@@ -116,7 +131,7 @@ describe("RegionStack (NFG あり: us-east-1)", () => {
       expect(tags.some((tg) => tg.Key === "failover-endpoint")).toBe(true);
       return tags.find((tg) => tg.Key === "failover-az")?.Value;
     });
-    expect(new Set(azValues)).toEqual(new Set(["a", "b"]));
+    expect(new Set(azValues)).toEqual(new Set(["us-east-1a", "us-east-1b"]));
   });
 
   test("LogGroup は 1 年保持 + RETAIN (監査要件を想定)", () => {
@@ -155,8 +170,28 @@ describe("RegionStack (NFG あり: us-east-1)", () => {
     expect(toCoreNetwork).toHaveLength(6);
   });
 
-  test("AZ ごとの unhealthy 継続アラームが 2 個 (アクションなし)", () => {
-    t.resourceCountIs("AWS::CloudWatch::Alarm", 2);
+  test("unhealthy 継続アラームがリージョンあたり 1 個 (Metrics Insights, アクションなし)", () => {
+    t.resourceCountIs("AWS::CloudWatch::Alarm", 1);
+  });
+
+  test("unhealthy アラームは閾値 1 x 5 期間 (15 分継続) で、AZ ごとに評価する", () => {
+    const alarms = Object.values(t.findResources("AWS::CloudWatch::Alarm")) as any[];
+    expect(alarms).toHaveLength(1);
+    const props = alarms[0].Properties;
+    // metricValue は 1 ログ行あたり 1 のため、閾値 1 x 5 期間で 15 分継続を表す。
+    // 閾値を 2 以上にすると 1 期間 (3 分) の Sum が最大 2 程度で到達しなくなる
+    expect(props.Threshold).toBe(1);
+    expect(props.EvaluationPeriods).toBe(5);
+    expect(props.ComparisonOperator).toBe("GreaterThanOrEqualToThreshold");
+    expect(props.TreatMissingData).toBe("notBreaching");
+    expect(props.AlarmActions).toBeUndefined();
+    // Expression は coreNetworkId のトークンを含むため JSON 文字列化して検証する
+    const query = JSON.stringify(props.Metrics[0].Expression);
+    expect(props.Metrics[0].Period).toBe(180);
+    expect(query).toContain("SELECT SUM(ProbeUnhealthy)");
+    expect(query).toContain("GROUP BY AvailabilityZone");
+    // multi-time-series アラームは GROUP BY と ORDER BY の両方が必須
+    expect(query).toContain("ORDER BY SUM() DESC");
   });
 });
 
@@ -189,10 +224,11 @@ describe("OrchestratorStack", () => {
   const probeTargets: ProbeTarget[] = REGION_CONFIGS.filter(
     isNfgRegion,
   ).flatMap((r) =>
-    ["a", "b"].map((az) => ({
+    r.availabilityZones.map((azName) => ({
       region: r.region,
-      azLetter: az,
-      functionArn: `arn:aws:lambda:${r.region}:123456789012:function:probe-${az}`,
+      azName,
+      functionArn: `arn:aws:lambda:${r.region}:123456789012:function:probe-${azName}`,
+      functionName: `probe-${azName}`,
     })),
   );
   const stack = new OrchestratorStack(newApp(), "Orchestrator", {
@@ -217,7 +253,15 @@ describe("OrchestratorStack", () => {
     t.hasResourceProperties("AWS::Scheduler::Schedule", {
       ScheduleExpression: "rate(3 minutes)",
       State: "DISABLED",
-      Name: "nfg-failover-health-check",
+      Name: "nfg-failover-orchestrator",
+      GroupName: "nfg-failover",
+    });
+  });
+
+  test("スケジュールは専用のスケジュールグループに置く (ダッシュボードの絞り込み用)", () => {
+    t.resourceCountIs("AWS::Scheduler::ScheduleGroup", 1);
+    t.hasResourceProperties("AWS::Scheduler::ScheduleGroup", {
+      Name: "nfg-failover",
     });
   });
 
@@ -253,8 +297,8 @@ describe("OrchestratorStack", () => {
     // ReplaceRoute 成功の着地点 (可観測化。レビュー指摘 3)
     expect(defText).toContain('"ReplaceRouteDone-us-east-1"');
     // AZ ごとの静的展開 (failedAzs の各 AZ を個別に付け替える)
-    expect(defText).toContain('"NeedReplaceAz-us-east-1-a"');
-    expect(defText).toContain('"ReplaceRt-us-east-1-a"');
+    expect(defText).toContain('"NeedReplaceAz-us-east-1a"');
+    expect(defText).toContain('"ReplaceRt-us-east-1a"');
     expect(defText).toContain("failedAzs");
     // 確認再測定による検知取り消しの可視化
     expect(defText).toContain('"ConfirmationCanceled"');
@@ -263,7 +307,7 @@ describe("OrchestratorStack", () => {
     // 確認再測定 (レビュー指摘 4): 1 回目で異常が出たときだけ 2 回目の probe を行う
     expect(defText).toContain('"NeedConfirm"');
     expect(defText).toContain('"WaitConfirm"');
-    expect(defText).toContain('"HealthCheckConfirm-us-east-1-a"');
+    expect(defText).toContain('"HealthCheckConfirm-us-east-1a"');
     expect(defText).toContain('"AggregateConfirm"');
   });
 
@@ -294,8 +338,8 @@ describe("MonitoringStack", () => {
     coreNetworkId: "core-network-0000",
     coreNetworkArn: "arn:aws:networkmanager::111111111111:core-network/core-network-0000",
     probeTargets: [
-      { region: "us-east-1", azLetter: "a", functionArn: "arn:aws:lambda:us-east-1:111111111111:function:probe-a" },
-      { region: "us-east-1", azLetter: "b", functionArn: "arn:aws:lambda:us-east-1:111111111111:function:probe-b" },
+      { region: "us-east-1", azName: "us-east-1a", functionArn: "arn:aws:lambda:us-east-1:111111111111:function:probe-us-east-1a", functionName: "probe-us-east-1a" },
+      { region: "us-east-1", azName: "us-east-1b", functionArn: "arn:aws:lambda:us-east-1:111111111111:function:probe-us-east-1b", functionName: "probe-us-east-1b" },
     ],
   });
   const stack = new MonitoringStack(app, "Monitoring", {
@@ -307,6 +351,29 @@ describe("MonitoringStack", () => {
       "arn:aws:cloudwatch:us-east-1:111111111111:alarm:probe-a",
       "arn:aws:cloudwatch:us-east-1:111111111111:alarm:probe-b",
     ],
+    probeTargets: [
+      { region: "us-east-1", azName: "us-east-1a", functionArn: "arn:aws:lambda:us-east-1:111111111111:function:probe-us-east-1a", functionName: "probe-us-east-1a" },
+      { region: "us-east-1", azName: "us-east-1b", functionArn: "arn:aws:lambda:us-east-1:111111111111:function:probe-us-east-1b", functionName: "probe-us-east-1b" },
+    ],
+    firewallNames: {
+      "us-east-1": "UsEast1RegionStack-Nfw",
+      "ap-northeast-1": "ApNortheast1RegionStack-Nfw",
+      "ap-northeast-3": "ApNortheast3RegionStack-Nfw",
+    },
+    natGateways: {
+      "us-east-1": [
+        { azName: "us-east-1a", natGatewayId: "nat-us-east-1a" },
+        { azName: "us-east-1b", natGatewayId: "nat-us-east-1b" },
+      ],
+      "ap-northeast-1": [
+        { azName: "ap-northeast-1a", natGatewayId: "nat-ap-northeast-1a" },
+        { azName: "ap-northeast-1c", natGatewayId: "nat-ap-northeast-1c" },
+      ],
+      "ap-northeast-3": [
+        { azName: "ap-northeast-3a", natGatewayId: "nat-ap-northeast-3a" },
+        { azName: "ap-northeast-3b", natGatewayId: "nat-ap-northeast-3b" },
+      ],
+    },
   });
   const t = Template.fromStack(stack);
 

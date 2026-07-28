@@ -150,6 +150,14 @@ flowchart TD
 | Lambda 実行間隔 | 3 分 (EventBridge Scheduler) |
 | 確認再測定 | 1 回目で異常検知時のみ 90 秒後に再測定 <br>2 回とも unhealthy の AZ だけを障害と確定 |
 | ランタイム | Python 3.14 |
+| 関数タイムアウト | 27 秒 (Step Functions 側の待ち時間 30 秒の内側) |
+| ログ形式 | JSON <br>EMF は `print()` で素通しさせ、進捗ログは `logging` で構造化する |
+
+ヘルスチェック Lambda は、残り実行時間が尽きる手前 2 秒で probe を打ち切り、必ず EMF を出力してから戻る。関数がタイムアウトすると EMF に到達せず `ProbeUnhealthy` が 1 件も発行されないため、検査経路の障害を検知するはずのアラームとダッシュボードが沈黙してしまうためである。打ち切った場合は診断情報の `truncated` が `true` になり、この unhealthy は経路障害と断定できないことを示す。
+接続には `socket.create_connection` を使わない。あれは `getaddrinfo` が返したアドレスごとに `timeout` を適用するため、1 回の呼び出しの上限が「解決したアドレス数 x 接続タイムアウト」に膨らむ。`checkip.amazonaws.com` は 8 アドレスに解決されるので 1 試行で最大 24 秒かかり、tier 1 だけで持ち時間を使い切って tier 2 を試せなくなる (2026-07-28 実機で確認)。自分で名前解決し、1 試行につき 1 アドレスへ接続することで上限を接続タイムアウトに固定している。試行ごとに別のアドレスを使うため、特定の 1 台だけが落ちている場合の誤判定も避けられる。名前解決は IPv4 のみ (`AF_INET`) に限定する。この VPC は IPv4 で構成しており Lambda の ENI に IPv6 アドレスが付かないため、IPv6 のアドレスは送信元アドレスを用意できず `Errno 99` で即失敗する。`socket.create_connection` は最後に発生した例外を投げる仕様のため、この即失敗が本来の失敗理由である IPv4 の接続タイムアウトを覆い隠してしまう。
+tier 1 つあたりの待ち時間にも上限を設けている。名前解決自体が固まった場合でも、次の tier を試す時間を残すためである。
+
+進捗は tier ごととエンドポイントごとに `logging` で出力する。フィールドは `extra` で渡し、ログレコードのトップレベルに展開する。`json.dumps` した文字列を `message` に入れるとエスケープされた JSON が入れ子になり、Logs Insights からフィールドとして扱えなくなるためである。`message` の中に構造を持たせることはできない。Lambda ランタイムの JsonFormatter は `message` を `record.getMessage()` の戻り値で組み立てており、辞書を渡しても型判定をしないため Python の repr 文字列になる。`extra` のキーは `logging.LogRecord` の属性と衝突すると `KeyError` になるため、`message` や `module` などは使わない。名前解決が固まるなど想定外の理由で関数がタイムアウトした場合でも、どこまで到達したかをログから追える。`socket.create_connection` の `timeout` 引数は接続にしか効かず、その前段の `getaddrinfo` には効かないため、`concurrent.futures.wait` で待ち時間そのものを上限付きにしている。
 
 疎通先は tier 化しており、AWS 管理のエンドポイント (tier 1) から順に試し、前の tier の全エンドポイントが失敗したときだけ次へ進む。平常時にサードパーティ (tier 2) へ接続しないための構成である。tier 1 の権威 DNS サーバーは名前も IP も固定値として埋め込まず、`amazonaws.com` の NS レコードを Lambda 実行時に引いて展開する。全 tier の全エンドポイントの失敗で初めて疎通不可と判定し、宛先側障害による誤検知を防ぐ。`probeEndpointTiers` などは `lib/config.ts` の `FAILOVER` で一元管理し、選定の経緯と checkip.amazonaws.com の出典上の位置づけ (2026-07-19 追記) は [疎通先の調査記録](docs/probe-endpoint-research.md) にある。
 
@@ -157,10 +165,15 @@ flowchart TD
 
 us-west-2 の CloudWatch ダッシュボード `nfg-failover-operations` に全リージョンの状態を集約している。
 行構成は「いま対応が必要か → どのリージョン / AZ に異常があるか → 何が起きて、いまどのポリシーか → 仕組みは動いているか → 検査は流れているか」であり、値の意味と対処は [docs/failure-scenarios.md](docs/failure-scenarios.md) の「実行結果の読み方」を参照する。
-カスタムメトリクス (名前空間 `NfgFailover`) はログのメトリクスフィルターで発行しており、本体ロジックには手を入れていない。
+カスタムメトリクス (名前空間 `NfgFailover`) は 2 つの経路で発行する。ヘルスチェックの Probe 系 4 種は Lambda が EMF (Embedded Metric Format) でログに埋め込んで直接発行し、オーケストレーターの状態遷移 8 種は Step Functions の実行ログをメトリクスフィルターで抽出して発行する。
+メトリクスフィルターのディメンション値は `$.フィールド名` のセレクタしか受け付けず、固定文字列を指定するとデプロイが `dimension value must be valid selector` で失敗する。Step Functions の実行ログには Core Network を示すフィールドが無いため、CloudWatch Logs の Transformer で `coreNetworkId` フィールドを注入したうえで、メトリクスフィルター側は `applyOnTransformedLogs` を有効にして変換後のログを参照している。
+
+NAT ゲートウェイのメトリクスは AZ ごとに 1 台ずつ系列を分けて表示する。片 AZ だけのポート枯渇や偏りを見分けるためで、リージョンでの合算はしない。パネルはメトリクスの性質で分けている。平常時 0 の異常シグナルである `ErrorPortAllocation` と `PacketsDropCount` を 1 つのパネルにまとめ、ポート枯渇の予兆となる `ActiveConnectionCount` と `ConnectionEstablishedCount` を別のパネルに、流量である `BytesOutToDestination` をさらに別のパネルに置く。統計は AWS のメトリクス一覧が示す most useful statistic に合わせ、同時接続数の瞬時値である `ActiveConnectionCount` のみ `Max`、他は `Sum` を使う。`PacketsDropCount` は平常時 0 で、総パケット数の 0.01% を超える場合は VPC のサービス側の問題を疑う。
+
+他リージョンの AWS ネイティブメトリクスは、この仕組みが作ったリソースだけを拾うようリソース識別子で絞り込んでいる。名前空間だけを指定した SEARCH 式は同一リージョンの無関係なリソースまで拾ってしまうためである。Network Firewall 名は `cdk.Names.uniqueResourceName` 由来で synth 時に確定するため素の文字列でスタック間を渡し、SEARCH 式の `FirewallName` で絞る。probe Lambda の関数名と NAT ゲートウェイ ID はデプロイ時決定のため `crossRegionReferences` 経由で MonitoringStack へ渡し、SEARCH 式ではなくディメンションを明示したメトリクスとして参照する。EventBridge Scheduler は `ScheduleGroup` ディメンションでしか絞れないため、この仕組み専用のスケジュールグループ `nfg-failover` を作って分離している。
 tier 2 接触 (サードパーティの疎通先への接続) は平常時 0 が正常値である。
 
-重大事象は CloudWatch アラームで検知する。アラームは us-west-2 の MonitoringStack に定義した 7 種類と、NFG リージョンごとの unhealthy 継続アラーム (リージョン x AZ で 6 個) の計 13 個である。MonitoringStack の 7 種類は次のとおりである。
+重大事象は CloudWatch アラームで検知する。アラームは us-west-2 の MonitoringStack に定義した 7 種類と、NFG リージョンごとの unhealthy 継続アラーム 3 個の計 10 個である。unhealthy 継続アラームは CloudWatch Metrics Insights のクエリ (`GROUP BY AvailabilityZone`) で AZ ごとに評価するため、リージョンあたり 1 個で両 AZ をカバーする。MonitoringStack の 7 種類は次のとおりである。
 
 - fail-close の発生 (FailCloseAlarm)
 - SFN 実行失敗 (SfnFailedAlarm)
@@ -180,13 +193,40 @@ tier 2 接触 (サードパーティの疎通先への接続) は平常時 0 が
 - use-edge-location を指定しなくても、複数リージョンに NFG があると優先度 #1 (us-east-1) が選ばれる
 - デタッチしても自動フォールバックせず、宛先へのトラフィックが破棄されるブラックホールの状態になる。ルート再評価には Core Network Policy の再適用が必須である
 - そのため障害リージョンを参照する経路の選択先を上書きする override が必要である。send-to (インターネット向け egress) と send-via (VPC 間 east-west) は対象トラフィックが異なる別のアクションであり、片方だけを上書きしてももう片方はデフォルトの優先度に従ってしまう。このため障害リージョンを避けるには両方の override を生成する必要がある
-  - send-to は per-edge に生成し、各エッジの優先 NFG (NFG あり = 自身 / NFG なし = 最近傍) が健全ならそれを維持し、優先 NFG が avoid に含まれる場合のみ次点 (failoverTarget) へ向ける
+  - send-to は per-edge に生成し、各エッジの地理グループの優先度チェーン (後述) を先頭から走査して最初に健全なリージョンへ向ける
   - send-via は per-pair の最小 override である方式 C で生成する。方式 C は、デフォルトの経路選択が障害中の NFG に向かうペアだけを個別に健全側へ上書きし、健全リージョンのローカル検査を維持する方式である。実機検証で apne1 ダウン時に apne3 のローカル検査が維持されることを FIB で確認済み (実機検証 13 / 14)
   - 方式 C が依存する未文書挙動 (エントリ重複 / set 外 use-edge-location / カバー外フォールバック) は実機検証 13 / 14 で受理と正常動作を確認済み。single-set への切り戻しは不要であるが、`lib/config.ts` の `SEND_VIA_OVERRIDE_MODE` は念のため保持する
-- egress のデフォルトは全エッジ → #1 のため、baseline ポリシーに send-to の per-edge override を常設する。この常設 override は、ヘルスチェックの通信が自リージョンの NFG を通過するようにするための機能要件であり、非 NFG リージョンは最近傍の NFG (us-west-2 → us-east-1 / ap-southeast-1 → ap-northeast-1) へ向ける
+- egress のデフォルトは全エッジ → #1 のため、baseline ポリシーに send-to の per-edge override を常設する。この常設 override は、ヘルスチェックの通信が自リージョンの NFG を通過するようにするための機能要件であり、非 NFG リージョンは地理グループのチェーン先頭の NFG (us-west-2 → us-east-1 / ap-southeast-1 → ap-northeast-1) へ向ける
 - baseline に RFC1918 の全レンジのブラックホール静的ルートを常設する。ネットワーク内に存在しない RFC1918 宛が send-to の 0.0.0.0/0 に乗って Inspection VPC と往復することを防ぐ。実在する VPC の CIDR は伝播ルートがロンゲストマッチにより優先されるため通信に影響しない。全状態の FIB で 10.0.0.0/8 / 172.16.0.0/12 / 192.168.0.0/16 が BLACKHOLE、実在 /16 が PROPAGATED ACTIVE で共存することを確認済み
 
 優先度テーブルは `lib/config.ts` を唯一のソースとし、`failoverTargetRegion(avoidRegions)` で次点を計算する。多段フェイルオーバー例: us-east-1 障害 → ap-northeast-1、さらに ap-northeast-1 も障害 → ap-northeast-3、全 3 障害 → fail-close。
+
+## 検査先の地理グループ
+
+Cloud WAN の default Region priority list は番号順で検査先を選び、地理的な近さを考慮しない。そのままでは ap-southeast-1 の通信が us-east-1 (優先度 1 位) で検査され、太平洋を往復してレイテンシが悪化する。
+
+これを避けるため、リージョンを地理グループに分け、グループごとに NFG リージョンの優先度チェーンを定義する。各エッジはチェーンを先頭から走査し、最初に健全なリージョンを検査先にする。
+
+| グループ | 所属リージョン | NFG 優先度チェーン |
+| --- | --- | --- |
+| US | us-east-1 / us-west-2 | us-east-1 → ap-northeast-1 → ap-northeast-3 |
+| AP | ap-northeast-1 / ap-northeast-3 / ap-southeast-1 | ap-northeast-1 → ap-northeast-3 → us-east-1 |
+
+NFG ありリージョンは自身がチェーンの先頭になる。各エッジの実効チェーンは次のとおりである。
+
+| エッジ | チェーン |
+| --- | --- |
+| us-east-1 | us-east-1 → ap-northeast-1 → ap-northeast-3 |
+| us-west-2 | us-east-1 → ap-northeast-1 → ap-northeast-3 |
+| ap-northeast-1 | ap-northeast-1 → ap-northeast-3 → us-east-1 |
+| ap-northeast-3 | ap-northeast-3 → ap-northeast-1 → us-east-1 |
+| ap-southeast-1 | ap-northeast-1 → ap-northeast-3 → us-east-1 |
+
+チェーンは `lib/config.ts` の `preferredNfgChain` (NFG なしリージョンに指定) を唯一のソースとし、NFG ありリージョンのチェーンは `preferredNfgByEdge()` が同じグループのチェーンから自動導出する。
+
+send-via (east-west) の override 値も同じ考え方で決める。ペアの両端が同一グループならそのグループのチェーンを使い、グループをまたぐペアはペアの NFG 端を先頭に置いたチェーンを使う (健全な端があればそちらで検査するため)。
+
+実機検証で、ap-northeast-1 の両 AZ 障害時に ap-southeast-1 の通信が us-east-1 ではなく ap-northeast-3 へ迂回することを FIB で確認済みである (evidence)。
 
 ## デプロイ
 
@@ -237,7 +277,8 @@ done
 
 # 全 6 関数が healthy になったことを確認してから、定期実行を有効化する
 aws scheduler get-schedule \
-  --name nfg-failover-health-check \
+  --name nfg-failover-orchestrator \
+  --group-name nfg-failover \
   --region us-west-2 \
   | jq 'del(.Arn, .CreationDate, .LastModificationDate) | .State = "ENABLED"' \
   > /tmp/schedule.json
@@ -279,7 +320,7 @@ VPC の AZ は `lib/config.ts` の `availabilityZones` に明示固定してい�
 10. **change set の生成 / 実行の所要時間**
     PENDING_GENERATION → READY_TO_EXECUTE と EXECUTING → EXECUTION_SUCCEEDED の実所要を計測し、poll 間隔 / 上限 (`lib/config.ts` の FAILOVER) を調整する
 11. **TLS の INSPECTED アラートが発火するか**
-    sid:2000002 は TLS の client_hello を検査通過の INSPECTED アラートとして記録する pass ルールで、sid:3000002 は established な TCP フローを通す pass ルールである。sid:3000002 が同一フローの後続パケット評価を止める場合、sid:2000002 の client_hello アラートが出ない可能性がある。出なければ sid:3000002 にも `alert;` を付けるなどで対処する (通信への影響はなし)
+    sid:2000002 は SNI が `checkip.amazonaws.com` の client_hello を検査通過の INSPECTED アラートとして記録する pass ルールで、sid:3000002 は established な TCP フローを通す pass ルールである。SNI で絞っているのは、全 TLS を alert すると SSM Session Manager など無関係な通信までログに載り検査リージョンの判別が困難になるためである。sid:3000002 が同一フローの後続パケット評価を止める場合、sid:2000002 の client_hello アラートが出ない可能性がある。出なければ sid:3000002 にも `alert;` を付けるなどで対処する (通信への影響はなし)
 12. **aws-sdk 統合のエラー名接頭辞** (確認済み)
     TestState の Task 実行で `networkmanager:putCoreNetworkPolicy` に存在しない ID を指定すると `NetworkManager.ResourceNotFoundException` が返り、エラー名接頭辞が `NetworkManager.` であることを実測で確定した。ConflictException が本 API のエラー (HTTP 409) であることは [API リファレンス](https://docs.aws.amazon.com/networkmanager/latest/APIReference/API_PutCoreNetworkPolicy.html) に記載がある
 13. **send-via per-pair override の受理** (確認済み)
@@ -300,12 +341,15 @@ VPC の AZ は `lib/config.ts` の `availabilityZones` に明示固定してい�
     apne1 の両 AZ 障害でフェイルオーバー済みの状態から apne3 も両 AZ 障害にし、次のサイクルで avoid={ap-northeast-1,ap-northeast-3} のポリシー (全エッジ us-east-1 向き) に 1 回で収束すること、ポリシーバージョンが振動して増え続けないことを実行履歴と list-core-network-policy-versions で確認。オーケストレーター経由で自動適用され、FIB で全エッジの全 CIDR が us-east-1/INSPECTION に収束することを確認した (evidence/ap-northeast-1とap-northeast-3ダウン時)
 21. **ヘルスチェックの tier フォールバックとサードパーティ不接触**
     平常時の NFW FLOW ログに 1.1.1.1 / 8.8.8.8 宛の接続が現れないこと (tier 1 で完結)、NS lookup と権威 DNS への TCP/53 が VPC 内 Lambda から成立すること、tier 1 の宛先を一時的に遮断すると tier 2 で healthy を維持することを確認
-22. **ダッシュボードとメトリクスフィルターの発火**
+22. **ダッシュボードとカスタムメトリクスの発行**
     次を確認する
-    - カスタムメトリクス (ProbeHealthy / ProbeUnhealthy / ProbeLatencyMs / ProbeTier2Contact / Orchestrator 系 8 つ) が実ログで発火すること
+    - Probe 系 4 種 (ProbeHealthy / ProbeUnhealthy / ProbeLatencyMs / ProbeTier2Contact) が EMF で発行され、EdgeLocation / AvailabilityZone / CoreNetwork の 3 ディメンションを持つこと
+    - Orchestrator 系 8 種がメトリクスフィルターで発行され、CoreNetwork ディメンションを持つこと。Transformer が `coreNetworkId` を注入することは `aws logs get-transformer` と `aws logs test-transformer` で確認済みだが、メトリクスフィルターの実発行は未確認である。8 種はいずれもフェイルオーバー経路のステートでしか発火せず、平常時の実行は `NoRegionFailover` と `SkipReplace-*` しか通らないため、障害試験の際に `aws cloudwatch list-metrics --namespace NfgFailover --region us-west-2` で CoreNetwork ディメンションに Core Network ID が入ることを確認する
     - 平常時に ProbeHealthy が 3 分ごとに全 6 系列で記録されること。これは平常時の正常性を示すシグナルである
-    - SFN 実行ログの JSON スキーマ (type / details.name) は公式未記載のため、初回実行のログ 1 件で実フィールド名を確認し、フィルターパターンと Logs Insights クエリ (details.parameters / details.resource) を実態に合わせて調整すること
-    - SEARCH 式ウィジェット (NFW / NAT GW / Lambda / Scheduler) の表示と、平常時に ProbeTier2Contact が 0 のままであること
+    - SFN 実行ログの JSON スキーマ (type / details.name) は公式未記載だが、実ログに対する `filter-log-events` で `{ $.details.name = "Aggregate" }` がマッチすることを確認済みである。未確認なのは Logs Insights クエリが参照する details.parameters / details.resource の 2 フィールドであり、初回実行のログで実フィールド名を確認して調整すること
+    - NFW と Scheduler の SEARCH 式ウィジェットが表示されること。NFW は `{AvailabilityZone, Engine, FirewallName}` の、Scheduler は `{ScheduleGroup}` のディメンション組み合わせで実際に発行されるかが未確認であり、空表示ならスキーマ指定を実発行の組み合わせに合わせる
+    - probe Lambda Errors と NAT Gateway のウィジェットに、この仕組み以外のリソースが現れないこと
+    - 平常時に ProbeTier2Contact が 0 のままであること
 
 ## 手動復旧
 
@@ -370,7 +414,7 @@ restore はバージョンを復元して LATEST にするだけで、**LIVE へ
 
 - ポリシー書き換えは「全セグメントが同一の検査設計 (同じ NFG / 同じ優先 NFG マップ) を持つ」前提である。セグメントごとに検査設計を変える場合は、override の生成と適用済み判定をセグメント単位に拡張する必要がある
 - ReplaceRoute の退避先は単一の健全な AZ に集約する。複数の健全な AZ へ分散させる設計は将来拡張とする
-- ダッシュボードの一部表現 (AZ の a / b 表記など) は 2 AZ 前提である
+- ダッシュボードの一部表現は 2 AZ 前提である
 - NFW のルールが pass-all なのは検証用である。本番で制限的なルールにする場合は、ヘルスチェックの疎通先 (checkip.amazonaws.com / amazonaws.com 権威 DNS への TCP 53 / tier 2 の公開 DNS) の許可を、ルール変更のたびに回帰確認する
 - 自動の PutCoreNetworkPolicy は「事前承認済みの自動変更」として変更管理に位置づける。変更記録はポリシーバージョンの Description と SFN 実行ログ (1 年保持) が担う
 - エッジ間の Cloud WAN 経路障害と非 NFG リージョン発の経路障害は検知対象外である (監視セクション参照)

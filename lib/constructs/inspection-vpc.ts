@@ -7,14 +7,23 @@ import * as cr from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
 import {
   CLOUDWAN,
+  FAILOVER,
   FAILOVER_ROLE_INSPECTION_CWAN_RT,
   RFC1918_CIDRS,
 } from "../config";
 
+/** ダッシュボードが AWS/NATGateway メトリクスを AZ 別に表示するための参照 */
+export interface NatGatewayRef {
+  /** 実 AZ 名 (us-east-1a 等)。グラフのラベルに使う */
+  readonly azName: string;
+  /** NatGatewayId ディメンションの値 */
+  readonly natGatewayId: string;
+}
+
 export interface InspectionVpcProps {
   /** VPC CIDR ブロック */
   readonly vpcCidr: string;
-  /** 使用する AZ 名 (順序が論理 AZ 識別子 a / b に対応。config.ts で固定) */
+  /** 使用する AZ 名 (config.ts で固定) */
   readonly availabilityZones: readonly [string, string];
   /** Cloud WAN Core Network ID */
   readonly coreNetworkId: string;
@@ -28,22 +37,31 @@ export interface InspectionVpcProps {
  * Inspection VPC (2AZ) - Network Firewall による検査 + インターネット出口。
  * send-to (egress) と send-via single-hop (east-west) の両方の検査先となる。
  *
- * 各 AZ に NF エンドポイントと NAT Gateway を持ち、各 AZ の Cloud WAN アタッチメント
- * サブネットのルートテーブルは自 AZ の NF エンドポイントを向く。AZ 障害時はこの RT の
- * デフォルトルートを生存 AZ の NF エンドポイントへ ReplaceRoute で付け替える (タグで特定)。
+ * 各 AZ に NFW エンドポイントと NAT Gateway を持ち、各 AZ の Cloud WAN アタッチメント
+ * サブネットのルートテーブルは自 AZ の NFW エンドポイントを向く。AZ 障害時はこの RT の
+ * デフォルトルートを生存 AZ の NFW エンドポイントへ ReplaceRoute で付け替える (タグで特定)。
  *
  * Appliance Mode を有効化し、Cloud WAN からの往復トラフィックの対称性 / 同 AZ pinning を保つ。
  */
 export class InspectionVpc extends Construct {
   public readonly vpc: ec2.IVpc;
+  /** AWS/NetworkFirewall メトリクスの FirewallName ディメンション用。synth 時に確定する文字列 */
+  public readonly firewallName: string;
+  /** AWS/NATGateway メトリクスの NatGatewayId ディメンション用。ダッシュボードのラベルに AZ 名を使う */
+  public readonly natGateways: NatGatewayRef[];
 
   constructor(scope: Construct, id: string, props: InspectionVpcProps) {
     super(scope, id);
+
+    // NAT ゲートウェイ ID をダッシュボードのメトリクスディメンションに使うため、既定のプロバイダーを
+    // 明示的に生成して configuredGateways を読めるようにする
+    const natProvider = ec2.NatProvider.gateway();
 
     const vpc = new ec2.Vpc(this, "Vpc", {
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCidr),
       availabilityZones: [...props.availabilityZones],
       natGateways: 2,
+      natGatewayProvider: natProvider,
       restrictDefaultSecurityGroup: false,
       subnetConfiguration: [
         {
@@ -63,24 +81,38 @@ export class InspectionVpc extends Construct {
 
     // Network Firewall Rule Group: pass-all + ICMP/TLS を alert (検査リージョン判別用)。
     // alert msg にリージョンラベルを埋め込み、ログだけで検査リージョンを一意に特定できるようにする。
-    const nfwRuleGroup = new networkfirewall.CfnRuleGroup(this, "NfwRuleGroup", {
-      ruleGroupName: cdk.Names.uniqueResourceName(this, { maxLength: 16 }) + "-Rg",
-      capacity: 100,
-      type: "STATEFUL",
-      ruleGroup: {
-        statefulRuleOptions: { ruleOrder: "STRICT_ORDER" },
-        rulesSource: {
-          rulesString:
-            [
-              `pass icmp any any -> any any (alert; sid:2000001; rev:1; msg:"INSPECTED at ${props.regionLabel} - ICMP";)`,
-              `pass tls any any -> any any (ssl_state:client_hello; flow:to_server,established; alert; sid:2000002; rev:1; msg:"INSPECTED at ${props.regionLabel} - TLS";)`,
-              "pass tcp any any -> any any (flow:not_established; sid:3000001; rev:1;)",
-              "pass tcp any any -> any any (flow:established; sid:3000002; rev:1;)",
-              "pass udp any any -> any any (sid:3000003; rev:1;)",
-            ].join("\n") + "\n",
+    // TLS の alert は SNI がヘルスチェックの疎通先のときだけに絞る。全 TLS を alert すると
+    // SSM Session Manager など無関係な通信までログに載り、検査リージョンの判別が困難になる
+    const tlsProbeHosts = FAILOVER.probeEndpointTiers
+      .flat()
+      .flatMap((e) => ("host" in e && e.port === 443 ? [e.host as string] : []));
+    const tlsSniRules = tlsProbeHosts.map(
+      (host, index) =>
+        `pass tls any any -> any any (tls.sni; content:"${host}"; nocase; endswith; ssl_state:client_hello; flow:to_server,established; alert; sid:${2000002 + index}; rev:1; msg:"INSPECTED at ${props.regionLabel} - TLS ${host}";)`,
+    );
+    const nfwRuleGroup = new networkfirewall.CfnRuleGroup(
+      this,
+      "NfwRuleGroup",
+      {
+        ruleGroupName:
+          cdk.Names.uniqueResourceName(this, { maxLength: 16 }) + "-Rg",
+        capacity: 100,
+        type: "STATEFUL",
+        ruleGroup: {
+          statefulRuleOptions: { ruleOrder: "STRICT_ORDER" },
+          rulesSource: {
+            rulesString:
+              [
+                `pass icmp any any -> any any (alert; sid:2000001; rev:1; msg:"INSPECTED at ${props.regionLabel} - ICMP";)`,
+                ...tlsSniRules,
+                "pass tcp any any -> any any (flow:not_established; sid:3000001; rev:1;)",
+                "pass tcp any any -> any any (flow:established; sid:3000002; rev:1;)",
+                "pass udp any any -> any any (sid:3000003; rev:1;)",
+              ].join("\n") + "\n",
+          },
         },
-      },
-    });
+      }
+    );
 
     const nfwPolicy = new networkfirewall.CfnFirewallPolicy(this, "NfwPolicy", {
       firewallPolicyName:
@@ -96,10 +128,12 @@ export class InspectionVpc extends Construct {
       },
     });
 
-    // NF を 2AZ 化: 両 AZ の Firewall サブネットに endpoint を作る
+    // NFW を 2AZ 化: 両 AZ の Firewall サブネットに endpoint を作る
     const fwSubnets = vpc.selectSubnets({ subnetGroupName: "Firewall" });
+    const firewallName =
+      cdk.Names.uniqueResourceName(this, { maxLength: 16 }) + "-Nfw";
     const nfw = new networkfirewall.CfnFirewall(this, "Nfw", {
-      firewallName: cdk.Names.uniqueResourceName(this, { maxLength: 16 }) + "-Nfw",
+      firewallName,
       firewallPolicyArn: nfwPolicy.attrFirewallPolicyArn,
       subnetMappings: fwSubnets.subnets.map((s) => ({ subnetId: s.subnetId })),
       vpcId: vpc.vpcId,
@@ -134,11 +168,11 @@ export class InspectionVpc extends Construct {
       },
     });
 
-    // 各 AZ の NF endpoint ID を DescribeFirewall (SyncStates) で正確に取得する。
+    // 各 AZ の NFW endpoint ID を DescribeFirewall (SyncStates) で正確に取得する。
     // attrEndpointIds は AZ 順序が保証されないため、AZ 名キーでアクセスできる SyncStates を使う。
     // outputPaths で必要フィールドのみに絞り、AwsCustomResource の 4096 byte 制限を回避する。
     const endpointPaths = vpc.availabilityZones.map(
-      (az) => `FirewallStatus.SyncStates.${az}.Attachment.EndpointId`,
+      (azName) => `FirewallStatus.SyncStates.${azName}.Attachment.EndpointId`
     );
     const describeFw = new cr.AwsCustomResource(this, "DescribeFwEndpoints", {
       onUpdate: {
@@ -146,7 +180,7 @@ export class InspectionVpc extends Construct {
         action: "DescribeFirewall",
         parameters: { FirewallArn: nfw.attrFirewallArn },
         physicalResourceId: cr.PhysicalResourceId.of(
-          `${nfw.attrFirewallArn}-endpoints`,
+          `${nfw.attrFirewallArn}-endpoints`
         ),
         outputPaths: endpointPaths,
       },
@@ -158,7 +192,9 @@ export class InspectionVpc extends Construct {
     describeFw.node.addDependency(nfw);
 
     // Cloud WAN VPC Attachment (両 AZ subnet / inspection NFG へタグ自動割当 / Appliance Mode)
-    const cwSubnets = vpc.selectSubnets({ subnetGroupName: "CloudWanAttachment" });
+    const cwSubnets = vpc.selectSubnets({
+      subnetGroupName: "CloudWanAttachment",
+    });
     const attachment = new networkmanager.CfnVpcAttachment(
       this,
       "CloudWanAttachment",
@@ -168,43 +204,43 @@ export class InspectionVpc extends Construct {
         subnetArns: cwSubnets.subnets.map((s) =>
           cdk.Arn.format(
             { service: "ec2", resource: "subnet", resourceName: s.subnetId },
-            cdk.Stack.of(this),
-          ),
+            cdk.Stack.of(this)
+          )
         ),
         options: { applianceModeSupport: true },
         tags: [{ key: CLOUDWAN.tagKey.nfg, value: CLOUDWAN.nfg }],
-      },
+      }
     );
 
     // 各 AZ のルーティング + フェイルオーバー用タグ
-    vpc.availabilityZones.forEach((az, index) => {
-      const azLetter = String.fromCharCode(97 + index); // 0 -> 'a', 1 -> 'b'
-      const suffix = azLetter.toUpperCase();
+    vpc.availabilityZones.forEach((azName) => {
+      // Construct ID 用のサフィックス。AZ 名の末尾 1 文字を使う
+      const suffix = azName.slice(-1).toUpperCase();
       const fwSubnet = vpc.selectSubnets({
         subnetGroupName: "Firewall",
-        availabilityZones: [az],
+        availabilityZones: [azName],
       }).subnets[0];
       const cwSubnet = vpc.selectSubnets({
         subnetGroupName: "CloudWanAttachment",
-        availabilityZones: [az],
+        availabilityZones: [azName],
       }).subnets[0];
       const pubSubnet = vpc.selectSubnets({
         subnetGroupName: "Public",
-        availabilityZones: [az],
+        availabilityZones: [azName],
       }).subnets[0];
 
       const fwEndpointId = describeFw.getResponseField(
-        `FirewallStatus.SyncStates.${az}.Attachment.EndpointId`,
+        `FirewallStatus.SyncStates.${azName}.Attachment.EndpointId`
       );
 
-      // CloudWanAttachment RT: Core Network からの流入を自 AZ の NF endpoint へ (= ReplaceRoute 対象)
+      // CloudWanAttachment RT: Core Network からの流入を自 AZ の NFW endpoint へ (= ReplaceRoute 対象)
       new ec2.CfnRoute(this, `CwSubnetDefaultRoute${suffix}`, {
         routeTableId: cwSubnet.routeTable.routeTableId,
         destinationCidrBlock: "0.0.0.0/0",
         vpcEndpointId: fwEndpointId,
       });
 
-      // Public RT: NAT GW からのリターン (RFC1918) を自 AZ の NF endpoint へ戻す
+      // Public RT: NAT GW からのリターン (RFC1918) を自 AZ の NFW endpoint へ戻す
       new ec2.CfnRoute(this, `PublicSubnetInternalRoute${suffix}`, {
         routeTableId: pubSubnet.routeTable.routeTableId,
         destinationCidrBlock: "10.0.0.0/8",
@@ -220,7 +256,7 @@ export class InspectionVpc extends Construct {
           routeTableId: fwSubnet.routeTable.routeTableId,
           destinationCidrBlock: "10.0.0.0/8",
           coreNetworkArn: props.coreNetworkArn,
-        },
+        }
       );
       fwInternalRoute.addDependency(attachment);
 
@@ -230,7 +266,7 @@ export class InspectionVpc extends Construct {
       // 重複で RouteAlreadyExists になりデプロイが失敗する。
       RFC1918_CIDRS.filter((cidr) => cidr !== "10.0.0.0/8").forEach(
         (cidr, cidrIndex) => {
-          // Public RT: NAT GW からのリターンを自 AZ の NF endpoint へ戻す
+          // Public RT: NAT GW からのリターンを自 AZ の NFW endpoint へ戻す
           new ec2.CfnRoute(this, `PubRfc1918Route${suffix}${cidrIndex}`, {
             routeTableId: pubSubnet.routeTable.routeTableId,
             destinationCidrBlock: cidr,
@@ -244,25 +280,31 @@ export class InspectionVpc extends Construct {
               routeTableId: fwSubnet.routeTable.routeTableId,
               destinationCidrBlock: cidr,
               coreNetworkArn: props.coreNetworkArn,
-            },
+            }
           );
           fwRoute.addDependency(attachment);
-        },
+        }
       );
 
       // CloudWanAttachment RT にフェイルオーバー用タグ (ReplaceRoute がタグ検索で特定)
       const cwRt = (cwSubnet as ec2.Subnet).node.findChild(
-        "RouteTable",
+        "RouteTable"
       ) as ec2.CfnRouteTable;
       cdk.Tags.of(cwRt).add(
         CLOUDWAN.tagKey.failoverRole,
-        FAILOVER_ROLE_INSPECTION_CWAN_RT,
+        FAILOVER_ROLE_INSPECTION_CWAN_RT
       );
       cdk.Tags.of(cwRt).add(CLOUDWAN.tagKey.failoverRegion, props.regionLabel);
-      cdk.Tags.of(cwRt).add(CLOUDWAN.tagKey.failoverAz, azLetter);
-      // この RT の AZ 自身の NF エンドポイント ID。ReplaceRoute の向け先の唯一のソース
+      cdk.Tags.of(cwRt).add(CLOUDWAN.tagKey.failoverAz, azName);
+      // この RT の AZ 自身の NFW エンドポイント ID。ReplaceRoute の向け先の唯一のソース
       // (RT の現在の 0/0 から推測しない。レビュー指摘 2)
       cdk.Tags.of(cwRt).add(CLOUDWAN.tagKey.failoverEndpoint, fwEndpointId);
     });
+
+    this.firewallName = firewallName;
+    this.natGateways = natProvider.configuredGateways.map((g) => ({
+      azName: g.az,
+      natGatewayId: g.gatewayId,
+    }));
   }
 }
