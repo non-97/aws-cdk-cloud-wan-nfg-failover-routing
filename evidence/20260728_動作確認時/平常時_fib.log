@@ -1,0 +1,174 @@
+> ./scripts/get-fib.sh
+CoreNetwork=core-network-09bff0f312a108e47  GlobalNetwork=global-network-0f57d8363acc156f7  (NM_REGION=us-west-2)
+
+===== attachment 凡例 =====
+ATTACHMENT                    REGION          ROLE
+attachment-00e00094a0cac4f20  ap-northeast-1  workload
+attachment-06b7ad85acb5c323e  ap-northeast-1  workload
+attachment-0442b778d44abe5fd  ap-northeast-1  workload
+attachment-01549a16105f4075d  ap-northeast-1  INSPECTION
+attachment-042a14ce14c314986  ap-northeast-3  workload
+attachment-0143d1bd4f4fc1547  ap-northeast-3  workload
+attachment-0f7822346106ed0fc  ap-northeast-3  workload
+attachment-0233e7b7c58c03952  ap-northeast-3  INSPECTION
+attachment-02c5253a53392449e  ap-southeast-1  workload
+attachment-09382f54b8266d68f  ap-southeast-1  workload
+attachment-0ff4f86fb177de1f3  us-east-1       INSPECTION
+attachment-08c1bb915fcad9c2b  us-east-1       workload
+attachment-004e69eea157c7f46  us-east-1       workload
+attachment-02aa5bb2a79ca418c  us-east-1       workload
+attachment-0ff625244eb148ff1  us-west-2       workload
+attachment-0862f145ab8472c91  us-west-2       workload
+
+===== SEGMENT=workload  EDGE=us-east-1 =====
+CIDR               TYPE        STATE      NEXT-HOP              ATTACHMENT
+0.0.0.0/0          STATIC      ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+0:0:0:0:0:0:0:0/0  STATIC      ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.1.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.11.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.13.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.2.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.21.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.22.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.23.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.3.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.31.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.32.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.33.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.41.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.43.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION  attachment-0ff4f86fb177de1f3
+10.0.0.0/8         STATIC      BLACKHOLE  -                     -
+172.16.0.0/12      STATIC      BLACKHOLE  -                     -
+192.168.0.0/16     STATIC      BLACKHOLE  -                     -
+
+===== SEGMENT=workload  EDGE=us-west-2 =====
+CIDR               TYPE        STATE      NEXT-HOP                   ATTACHMENT
+10.0.0.0/8         STATIC      BLACKHOLE  -                          -
+172.16.0.0/12      STATIC      BLACKHOLE  -                          -
+192.168.0.0/16     STATIC      BLACKHOLE  -                          -
+10.31.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.32.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.33.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+0.0.0.0/0          STATIC      ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+0:0:0:0:0:0:0:0/0  STATIC      ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.1.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.11.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.13.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.2.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.3.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.41.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.43.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.21.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.22.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.23.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+
+===== SEGMENT=workload  EDGE=ap-northeast-1 =====
+CIDR               TYPE        STATE      NEXT-HOP                   ATTACHMENT
+0.0.0.0/0          STATIC      ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+0:0:0:0:0:0:0:0/0  STATIC      ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.11.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.13.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.21.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.22.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.23.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.31.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.32.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.33.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.41.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.43.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.0.0.0/8         STATIC      BLACKHOLE  -                          -
+172.16.0.0/12      STATIC      BLACKHOLE  -                          -
+192.168.0.0/16     STATIC      BLACKHOLE  -                          -
+10.1.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.2.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.3.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+
+===== SEGMENT=workload  EDGE=ap-northeast-3 =====
+CIDR               TYPE        STATE      NEXT-HOP                   ATTACHMENT
+0.0.0.0/0          STATIC      ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+0:0:0:0:0:0:0:0/0  STATIC      ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.11.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.13.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.31.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.32.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.33.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.41.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.43.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.0.0.0/8         STATIC      BLACKHOLE  -                          -
+172.16.0.0/12      STATIC      BLACKHOLE  -                          -
+192.168.0.0/16     STATIC      BLACKHOLE  -                          -
+10.21.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.22.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.23.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.1.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.2.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.3.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+
+===== SEGMENT=workload  EDGE=ap-southeast-1 =====
+CIDR               TYPE        STATE      NEXT-HOP                   ATTACHMENT
+10.0.0.0/8         STATIC      BLACKHOLE  -                          -
+172.16.0.0/12      STATIC      BLACKHOLE  -                          -
+192.168.0.0/16     STATIC      BLACKHOLE  -                          -
+10.31.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.32.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.33.0.0/16       PROPAGATED  ACTIVE     ap-northeast-3/INSPECTION  attachment-0233e7b7c58c03952
+10.1.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.11.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.13.0.0/16       PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.2.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+10.3.0.0/16        PROPAGATED  ACTIVE     us-east-1/INSPECTION       attachment-0ff4f86fb177de1f3
+0.0.0.0/0          STATIC      ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+0:0:0:0:0:0:0:0/0  STATIC      ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.21.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.22.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.23.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.41.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+10.43.0.0/16       PROPAGATED  ACTIVE     ap-northeast-1/INSPECTION  attachment-01549a16105f4075d
+
+===== NFG=inspection  EDGE=us-east-1 =====
+CIDR          TYPE        STATE   NEXT-HOP                       ATTACHMENT
+10.11.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@us-west-2       -
+10.13.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@us-west-2       -
+10.21.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-1  -
+10.22.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-1  -
+10.23.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-1  -
+10.31.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-3  -
+10.32.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-3  -
+10.33.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-3  -
+10.3.0.0/16   PROPAGATED  ACTIVE  us-east-1/workload             attachment-08c1bb915fcad9c2b
+10.1.0.0/16   PROPAGATED  ACTIVE  us-east-1/workload             attachment-004e69eea157c7f46
+10.2.0.0/16   PROPAGATED  ACTIVE  us-east-1/workload             attachment-02aa5bb2a79ca418c
+10.41.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-southeast-1  -
+10.43.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-southeast-1  -
+
+===== NFG=inspection  EDGE=ap-northeast-1 =====
+CIDR          TYPE        STATE   NEXT-HOP                       ATTACHMENT
+10.21.0.0/16  PROPAGATED  ACTIVE  ap-northeast-1/workload        attachment-00e00094a0cac4f20
+10.1.0.0/16   PROPAGATED  ACTIVE  NFG:inspection@us-east-1       -
+10.2.0.0/16   PROPAGATED  ACTIVE  NFG:inspection@us-east-1       -
+10.3.0.0/16   PROPAGATED  ACTIVE  NFG:inspection@us-east-1       -
+10.31.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-3  -
+10.32.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-3  -
+10.33.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-3  -
+10.41.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-southeast-1  -
+10.43.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-southeast-1  -
+10.22.0.0/16  PROPAGATED  ACTIVE  ap-northeast-1/workload        attachment-0442b778d44abe5fd
+10.23.0.0/16  PROPAGATED  ACTIVE  ap-northeast-1/workload        attachment-06b7ad85acb5c323e
+10.11.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@us-west-2       -
+10.13.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@us-west-2       -
+
+===== NFG=inspection  EDGE=ap-northeast-3 =====
+CIDR          TYPE        STATE   NEXT-HOP                       ATTACHMENT
+10.1.0.0/16   PROPAGATED  ACTIVE  NFG:inspection@us-east-1       -
+10.2.0.0/16   PROPAGATED  ACTIVE  NFG:inspection@us-east-1       -
+10.3.0.0/16   PROPAGATED  ACTIVE  NFG:inspection@us-east-1       -
+10.32.0.0/16  PROPAGATED  ACTIVE  ap-northeast-3/workload        attachment-0f7822346106ed0fc
+10.11.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@us-west-2       -
+10.13.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@us-west-2       -
+10.41.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-southeast-1  -
+10.43.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-southeast-1  -
+10.31.0.0/16  PROPAGATED  ACTIVE  ap-northeast-3/workload        attachment-042a14ce14c314986
+10.33.0.0/16  PROPAGATED  ACTIVE  ap-northeast-3/workload        attachment-0143d1bd4f4fc1547
+10.21.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-1  -
+10.22.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-1  -
+10.23.0.0/16  PROPAGATED  ACTIVE  NFG:inspection@ap-northeast-1  -

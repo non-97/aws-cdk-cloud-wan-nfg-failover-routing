@@ -1,0 +1,120 @@
+{
+    "_aws": {
+        "Timestamp": 1785226918533,
+        "CloudWatchMetrics": [
+            {
+                "Namespace": "NfgFailover",
+                "Dimensions": [
+                    [
+                        "EdgeLocation",
+                        "AvailabilityZone",
+                        "CoreNetwork"
+                    ]
+                ],
+                "Metrics": [
+                    {
+                        "Name": "ProbeHealthy",
+                        "Unit": "Count"
+                    },
+                    {
+                        "Name": "ProbeUnhealthy",
+                        "Unit": "Count"
+                    },
+                    {
+                        "Name": "ProbeTier2Contact",
+                        "Unit": "Count"
+                    }
+                ]
+            }
+        ]
+    },
+    "EdgeLocation": "ap-northeast-1",
+    "AvailabilityZone": "apne1-az4",
+    "CoreNetwork": "core-network-09bff0f312a108e47",
+    "ProbeHealthy": 0,
+    "ProbeUnhealthy": 1,
+    "ProbeTier2Contact": 1,
+    "healthy": false,
+    "tiersProbed": 2,
+    "nsLookupMs": 13,
+    "truncated": false,
+    "results": [
+        {
+            "host": "ns-1321.awsdns-37.org",
+            "port": 53,
+            "latencyMs": 9669,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 1,
+            "address": "205.251.197.41",
+            "error": "TimeoutError: timed out",
+            "tier": 1
+        },
+        {
+            "host": "ns-1670.awsdns-16.co.uk",
+            "port": 53,
+            "latencyMs": 9650,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 1,
+            "address": "205.251.198.134",
+            "error": "TimeoutError: timed out",
+            "tier": 1
+        },
+        {
+            "host": "ns-27.awsdns-03.com",
+            "port": 53,
+            "latencyMs": 9669,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 1,
+            "address": "205.251.192.27",
+            "error": "TimeoutError: timed out",
+            "tier": 1
+        },
+        {
+            "host": "ns-967.awsdns-56.net",
+            "port": 53,
+            "latencyMs": 9629,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 1,
+            "address": "205.251.195.199",
+            "error": "TimeoutError: timed out",
+            "tier": 1
+        },
+        {
+            "host": "checkip.amazonaws.com",
+            "port": 443,
+            "latencyMs": 9627,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 8,
+            "address": "54.251.8.68",
+            "error": "TimeoutError: timed out",
+            "tier": 1
+        },
+        {
+            "host": "1.1.1.1",
+            "port": 53,
+            "latencyMs": 9610,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 1,
+            "address": "1.1.1.1",
+            "error": "TimeoutError: timed out",
+            "tier": 2
+        },
+        {
+            "host": "8.8.8.8",
+            "port": 53,
+            "latencyMs": 9607,
+            "connected": false,
+            "attempts": 3,
+            "addresses": 1,
+            "address": "8.8.8.8",
+            "error": "TimeoutError: timed out",
+            "tier": 2
+        }
+    ]
+}

@@ -1,0 +1,58 @@
+> scripts/get-endpoints.sh
+==============================
+ EC2 Instances (Private IP)
+==============================
+
+--- us-east-1 (4 instances) ---
+NAME                                                     INSTANCE-ID          AZ          PRIVATE-IP  VPC-ID
+NfgFailoverRegionStack-us-east-1/WorkloadVpc1/InstanceA  i-0f4dc6650ea429fea  us-east-1a  10.1.0.8    vpc-08d07149eae93f85a
+NfgFailoverRegionStack-us-east-1/WorkloadVpc2/InstanceA  i-0f832e0e0b15f9743  us-east-1a  10.3.0.60   vpc-0633f39b9065aea08
+NfgFailoverRegionStack-us-east-1/WorkloadVpc1/InstanceB  i-0c0c577243d6ac3d5  us-east-1b  10.1.1.109  vpc-08d07149eae93f85a
+NfgFailoverRegionStack-us-east-1/WorkloadVpc2/InstanceB  i-02e3a8068b80af17f  us-east-1b  10.3.1.230  vpc-0633f39b9065aea08
+
+--- us-west-2 (4 instances) ---
+NAME                                                     INSTANCE-ID          AZ          PRIVATE-IP  VPC-ID
+NfgFailoverRegionStack-us-west-2/WorkloadVpc1/InstanceA  i-087b030aa684ed9a9  us-west-2a  10.11.0.57  vpc-0b52f161dc5c2f0e8
+NfgFailoverRegionStack-us-west-2/WorkloadVpc2/InstanceA  i-0b4ce4b33380e7aac  us-west-2a  10.13.0.16  vpc-008f82717172f00a1
+NfgFailoverRegionStack-us-west-2/WorkloadVpc1/InstanceB  i-0ca635a8cd8643ec1  us-west-2b  10.11.1.30  vpc-0b52f161dc5c2f0e8
+NfgFailoverRegionStack-us-west-2/WorkloadVpc2/InstanceB  i-03ab8caa81a50efb2  us-west-2b  10.13.1.80  vpc-008f82717172f00a1
+
+--- ap-northeast-1 (4 instances) ---
+NAME                                                          INSTANCE-ID          AZ               PRIVATE-IP   VPC-ID
+NfgFailoverRegionStack-ap-northeast-1/WorkloadVpc1/InstanceA  i-0e853ba0d5bdebb20  ap-northeast-1a  10.21.0.53   vpc-06c4ba794d1903963
+NfgFailoverRegionStack-ap-northeast-1/WorkloadVpc2/InstanceA  i-01fcfa4a09b2c4a93  ap-northeast-1a  10.23.0.70   vpc-0568401fda94cf39f
+NfgFailoverRegionStack-ap-northeast-1/WorkloadVpc1/InstanceB  i-03ca5e935ed966b7c  ap-northeast-1c  10.21.1.242  vpc-06c4ba794d1903963
+NfgFailoverRegionStack-ap-northeast-1/WorkloadVpc2/InstanceB  i-08927f058b375c3c7  ap-northeast-1c  10.23.1.203  vpc-0568401fda94cf39f
+
+--- ap-northeast-3 (4 instances) ---
+NAME                                                          INSTANCE-ID          AZ               PRIVATE-IP   VPC-ID
+NfgFailoverRegionStack-ap-northeast-3/WorkloadVpc1/InstanceA  i-08177212341f02d7c  ap-northeast-3a  10.31.0.196  vpc-0ee071324effbfb19
+NfgFailoverRegionStack-ap-northeast-3/WorkloadVpc2/InstanceA  i-06d0b677a8acfba56  ap-northeast-3a  10.33.0.53   vpc-04d2a68df91a596a6
+NfgFailoverRegionStack-ap-northeast-3/WorkloadVpc1/InstanceB  i-01b665ef65e57830f  ap-northeast-3b  10.31.1.207  vpc-0ee071324effbfb19
+NfgFailoverRegionStack-ap-northeast-3/WorkloadVpc2/InstanceB  i-060d0645747fe3f36  ap-northeast-3b  10.33.1.181  vpc-04d2a68df91a596a6
+
+--- ap-southeast-1 (4 instances) ---
+NAME                                                          INSTANCE-ID          AZ               PRIVATE-IP  VPC-ID
+NfgFailoverRegionStack-ap-southeast-1/WorkloadVpc1/InstanceA  i-056f000f9bd36b2e3  ap-southeast-1a  10.41.0.28  vpc-0653ab7ddb00590a5
+NfgFailoverRegionStack-ap-southeast-1/WorkloadVpc2/InstanceA  i-0dab5a58e023317e8  ap-southeast-1a  10.43.0.29  vpc-0ce1841e377eccbeb
+NfgFailoverRegionStack-ap-southeast-1/WorkloadVpc1/InstanceB  i-05d41fe15d916f4db  ap-southeast-1b  10.41.1.6   vpc-0653ab7ddb00590a5
+NfgFailoverRegionStack-ap-southeast-1/WorkloadVpc2/InstanceB  i-0c2cf72b3406d2226  ap-southeast-1b  10.43.1.26  vpc-0ce1841e377eccbeb
+
+==============================
+ NAT Gateways (Public IP)
+==============================
+
+--- us-east-1 (2 NAT Gateways) ---
+VPC-NAME                                            NAT-GW-ID              AZ          PUBLIC-IP       PRIVATE-IP
+NfgFailoverRegionStack-us-east-1/InspectionVpc/Vpc  nat-02d476a044c2879d1  us-east-1b  100.59.128.13   10.0.5.69
+NfgFailoverRegionStack-us-east-1/InspectionVpc/Vpc  nat-0f1673d6ab192a1d1  us-east-1a  34.239.224.122  10.0.4.191
+
+--- ap-northeast-1 (2 NAT Gateways) ---
+VPC-NAME                                                 NAT-GW-ID              AZ               PUBLIC-IP       PRIVATE-IP
+NfgFailoverRegionStack-ap-northeast-1/InspectionVpc/Vpc  nat-0e93b00bb45145d48  ap-northeast-1a  54.178.136.55   10.20.4.55
+NfgFailoverRegionStack-ap-northeast-1/InspectionVpc/Vpc  nat-07a6865d132ff51b9  ap-northeast-1c  13.115.181.227  10.20.5.151
+
+--- ap-northeast-3 (2 NAT Gateways) ---
+VPC-NAME                                                 NAT-GW-ID              AZ               PUBLIC-IP      PRIVATE-IP
+NfgFailoverRegionStack-ap-northeast-3/InspectionVpc/Vpc  nat-0763ab461d0bccefa  ap-northeast-3a  16.208.55.199  10.30.4.209
+NfgFailoverRegionStack-ap-northeast-3/InspectionVpc/Vpc  nat-033dfc01a80dfafac  ap-northeast-3b  15.168.232.53  10.30.5.231
